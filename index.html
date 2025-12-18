@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ThaiPlanner '26 - Ultimate Guide & Planner</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* Base Setup */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        body {
+            background: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            color: #0f172a;
+            -webkit-font-smoothing: antialiased;
+            overscroll-behavior-y: none;
+        }
+
+        /* Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        .highlight-active {
+            background-color: #f0fdf4; /* emerald-50 */
+            border-color: #10b981; /* emerald-500 */
+        }
+    </style>
+</head>
+
+<body class="no-scrollbar">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useCallback } = React;
+
+        // --- DATA LAYER ---
+        const IMAGES = {
+            bangkok: "https://content.r9cdn.net/rimg/dimg/21/e1/c054fc24-city-26166-176726042eb.jpg?width=1366&height=768&xhint=2881&yhint=1499&crop=true",
+            ayutthaya: "https://www.agoda.com/wp-content/uploads/2024/07/Wat-Chaiwatthanaram-Ayutthaya-Thailand-1050x700.jpg",
+            sukhothai: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/05/a8/a2/0a/sukhothai-historical.jpg?w=1200&h=-1&s=1",
+            khaoyai: "https://www.thainationalparks.com/img/tnp/poi/snippets/16x9/khao-yai-national-park.jpg",
+            krabi: "https://www.weseektravel.com/wp-content/uploads/2023/04/how-to-get-to-railay-beach-1.jpg",
+            similan: "https://www.easydayphuket.com/wp-content/uploads/2013/07/Similan-Islands-Donald-Duck-Rock.jpg",
+            kohlanta: "https://img.hostelworldblog.com/blog/wp-content/uploads/2024/09/dreamstime_s_113474394.jpg",
+            kohlipe: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/6a/56/27/koh-lipe.jpg?w=900&h=500&s=1",
+            kohmuk: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/13/ed/8f/20/caption.jpg?w=1400&h=1400&s=1",
+            phuket: "https://www.theprivateworld.com/wp-content/uploads/2022/09/Phuket-Old-Town-Featured-Image.jpg",
+            kohyaoyai: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=800&q=80",
+            kohkood: "https://photos.awalkintheworld.com/wp-content/uploads/2023/02/beautiful-koh-kood-island-scaled.jpg",
+            kohchang: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/07/14/cf/47/lonely-beach.jpg?w=800&h=500&s=1",
+            chiangmai: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/30/03/1c/60/caption.jpg?w=600&h=400&s=1",
+            chiangrai: "https://warmcheaptrips.com/wp-content/uploads/2023/01/Cosa-vedere-a-Chiang-Rai.jpeg",
+            huaikhakhaeng: "https://images.unsplash.com/photo-1542129388-75b7541786d5?auto=format&fit=crop&w=800&q=80"
+        };
+
+        const DESTINATIONS = [
+            { 
+                id: 'bangkok', name: "Bangkok (Mix)", region: "Centro", latLng: "13.7563,100.5018", category: "Cultura", image: IMAGES.bangkok, price: "€€", tags: ["Must-See", "Thonburi"], desc: "Il mix perfetto tra i grandi classici e l'autenticità di Thonburi.", 
+                highlights: [
+                    {t: "Grand Palace & Wat Pho", d: "Le icone spirituali (vai all'apertura)."}, 
+                    {t: "Khlong Bang Luang", d: "Comunità artistica sui canali (Baan Silapin)."},
+                    {t: "Mercato degli Amuleti", d: "Superstizione e cultura vera, fuori dai tour."}
+                ], risk: null, tip: "Prendi la barca pubblica (bandiera arancione) sul fiume Chao Phraya per muoverti come un locale." 
+            },
+            { 
+                id: 'bangkok_insider', name: "Bangkok (Thonburi)", region: "Centro", latLng: "13.7251,100.4859", category: "Insider", image: IMAGES.bangkok, price: "€", tags: ["Street Food", "Autentico"], desc: "L'anima autentica sulla riva ovest. Qui trovi il cibo di strada leggendario lontano dai turisti.", 
+                highlights: [
+                    {t: "Talat Phlu Market", d: "Mee Krob (vermicelli Re Rama V) e gelato di Ni-Ang."}, 
+                    {t: "Sunee Khao Mu Daeng", d: "Maiale arrosto servito sui binari del treno."},
+                    {t: "Baan Silapin", d: "Teatro delle marionette in una casa di legno di 200 anni."}
+                ], risk: null, tip: "Arriva a Talat Phlu nel tardo pomeriggio per vedere il mercato prendere vita." 
+            },
+            { 
+                id: 'ayutthaya', name: "Ayutthaya", region: "Centro", latLng: "14.3532,100.5684", category: "Storia", image: IMAGES.ayutthaya, price: "€", tags: ["Rovine", "Muay Thai"], desc: "Antica capitale imperiale. Templi rossi al tramonto e storia millenaria.", 
+                highlights: [
+                    {t: "Wat Mahathat", d: "Testa del Buddha nelle radici."}, 
+                    {t: "Gamberi di Fiume", d: "Giganti, grigliati sui ristoranti galleggianti."},
+                    {t: "Muay Thai Day", d: "17 Marzo (Evento Unico)."}
+                ], risk: null, tip: "Noleggia una bici nel tardo pomeriggio (16:30) per evitare il caldo." 
+            },
+            { 
+                id: 'khaoyai', name: "Khao Yai NP", region: "Centro", latLng: "14.4392,101.3723", category: "Natura", image: IMAGES.khaoyai, price: "€€", tags: ["Elefanti", "UNESCO"], desc: "Patrimonio UNESCO. Qui vedi gli elefanti selvatici veri, non quelli nei santuari.", 
+                highlights: [
+                    {t: "Night Safari", d: "Vedere gli animali nel loro habitat."}, 
+                    {t: "Cascata Haew Narok", d: "Imponente salto d'acqua."},
+                    {t: "PB Valley", d: "Vigneti thailandesi (sorprendenti)."}
+                ], risk: null, tip: "Serve un driver privato o tour guidato per entrare e muoversi nel parco." 
+            },
+            { 
+                id: 'sukhothai', name: "Sukhothai", region: "Nord (Safe)", latLng: "17.0186,99.7028", category: "Storia", image: IMAGES.sukhothai, price: "€", tags: ["Bici", "Alba"], desc: "L'Alba della Felicità. Parco storico immenso e pianeggiante, perfetto in bici.", 
+                highlights: [
+                    {t: "Wat Saphan Hin", d: "Alba mistica sulla collina."}, 
+                    {t: "Bici nel Parco", d: "Pedalata tra i Buddha giganti."},
+                    {t: "Noodle Sukhothai", d: "Specialità agrodolce locale."}
+                ], risk: {type: "monitor", msg: "Monitorare AQI"}, tip: "Soggiorna nella 'Old City' vicino al parco, non nella città nuova." 
+            },
+            { 
+                id: 'krabi', name: "Krabi (Ao Nang)", region: "Sud (Andamane)", latLng: "8.0307,98.8328", category: "Mare", image: IMAGES.krabi, price: "€€€", tags: ["Faraglioni", "Iconico"], desc: "Cattedrali di roccia sul mare. Base perfetta per l'island hopping.", 
+                highlights: [
+                    {t: "Railay West", d: "Tramonto tra le rocce."}, 
+                    {t: "Hong Islands", d: "Laguna smeraldo segreta."},
+                    {t: "Tiger Cave Temple", d: "Vista panoramica (1237 gradini)."}
+                ], risk: null, tip: "Evita la spiaggia di Ao Nang per il bagno (troppe barche), usala solo come base logistica." 
+            },
+            { 
+                id: 'similan', name: "Isole Similan", region: "Sud (Andamane)", latLng: "8.6631,97.6359", category: "Mare VIP", image: IMAGES.similan, price: "€€€", tags: ["Diving", "Top World"], desc: "Aperto solo 6 mesi l'anno (fino al 15 Maggio). Acqua irreale. Top 10 diving al mondo.", 
+                highlights: [
+                    {t: "Sailing Rock", d: "Punto panoramico iconico."}, 
+                    {t: "Tartarughe", d: "Nuotare con loro è frequente."},
+                    {t: "Snorkeling", d: "Visibilità 30 metri."}
+                ], risk: {type: "logistics", msg: "Prenotare!"}, tip: "Parti con un tour 'Early Bird' per arrivare prima delle folle delle 11:00." 
+            },
+            { 
+                id: 'kohmuk', name: "Koh Muk", region: "Sud (Gemme)", latLng: "7.3722,99.2977", category: "Natura", image: IMAGES.kohmuk, price: "€€", tags: ["Dugonghi", "Grotta"], desc: "Il segreto delle Andamane. Famosa per la Grotta di Smeraldo e habitat dei Dugonghi.", 
+                highlights: [
+                    {t: "Emerald Cave", d: "Nuota nel tunnel buio per raggiungere la spiaggia segreta."}, 
+                    {t: "Avvistamento Dugonghi", d: "Tour responsabile per vederli."},
+                    {t: "Sivalai Beach", d: "Lingua di sabbia bianca."}
+                ], risk: {type: "logistics", msg: "Via Trang"}, tip: "Evita la Grotta di Smeraldo tra le 10:00 e le 14:00 (orario tour di massa)." 
+            },
+            { 
+                id: 'kohlanta', name: "Koh Lanta", region: "Sud (Andamane)", latLng: "7.5758,99.0358", category: "Relax", image: IMAGES.kohlanta, price: "€€", tags: ["Nomadi", "Scooter"], desc: "L'isola chill. Niente moto d'acqua, solo bar in bambù e villaggi di pescatori.", 
+                highlights: [
+                    {t: "Old Town", d: "Case in teak su palafitte."}, 
+                    {t: "Tung Yee Peng", d: "Gondola tra le mangrovie."},
+                    {t: "Bamboo Bay", d: "Spiaggia selvaggia a sud."}
+                ], risk: null, tip: "Partecipa a un workshop di Batik o visita la comunità locale nella Old Town." 
+            },
+            { 
+                id: 'kohlipe', name: "Koh Lipe", region: "Sud Estremo", latLng: "6.4884,99.2937", category: "Mare", image: IMAGES.kohlipe, price: "€€€", tags: ["Maldive Thai", "Turchese"], desc: "Lontana, piccola, incredibile. L'acqua più azzurra della Thailandia. Molto turistica ma stupenda.", 
+                highlights: [
+                    {t: "Sunrise Beach", d: "Snorkeling dalla riva."}, 
+                    {t: "Tarutao Park", d: "Natura incontaminata."},
+                    {t: "Walking Street", d: "Pesce fresco la sera."}
+                ], risk: {type: "logistics", msg: "Viaggio lungo"}, tip: "Prenota traghetti e hotel con mesi di anticipo, l'isola è piccola." 
+            },
+            { 
+                id: 'phuket', name: "Phuket Town", region: "Sud (Andamane)", latLng: "7.8804,98.3923", category: "Cultura/Mare", image: IMAGES.phuket, price: "€€", tags: ["Gastronomia", "Heritage"], desc: "Non solo spiagge. La città vecchia è un gioiello sino-portoghese e capitale gastronomica UNESCO.", 
+                highlights: [
+                    {t: "Walking Street", d: "Mercato domenicale colorato."}, 
+                    {t: "Cucina Peranakan", d: "Fusion cinese-malese unica."},
+                    {t: "Nai Harn Beach", d: "Spiaggia tranquilla a sud."}
+                ], risk: null, tip: "Base strategica. Assaggia l'Hokkien Mee e i dim sum locali." 
+            },
+            { 
+                id: 'kohyaoyai', name: "Koh Yao Yai", region: "Sud (Phang Nga)", latLng: "7.9544,98.5951", category: "Relax", image: IMAGES.kohyaoyai, price: "€€", tags: ["Pace", "Villaggi"], desc: "Tra la folla di Phuket e Krabi, un'oasi di pace. Villaggi musulmani e piantagioni di gomma.", 
+                highlights: [
+                    {t: "Laem Haad", d: "Lingua di sabbia da film."}, 
+                    {t: "Giro in scooter", d: "Strade vuote e bufali."},
+                    {t: "Hong Island", d: "Vicina per gite in barca."}
+                ], risk: null, tip: "Rispetto per la cultura locale musulmana: niente alcol nei villaggi (solo nei resort)." 
+            },
+            { 
+                id: 'kohkood', name: "Koh Kood", region: "Est (Golfo)", latLng: "11.6607,102.5323", category: "Mare Selvaggio", image: IMAGES.kohkood, price: "€€€", tags: ["Esclusivo", "Silenzio"], desc: "L'isola del cocco. Pochi resort, niente vita notturna, spiagge bianche. Il rifugio per il silenzio.", 
+                highlights: [
+                    {t: "Bang Bao Beach", d: "Baia calma cristallina."}, 
+                    {t: "Cascata Klong Chao", d: "Tuffo dolce nella giungla."},
+                    {t: "Villaggi Pescatori", d: "Ao Yai per il pesce fresco."}
+                ], risk: {type: "logistics", msg: "Pochi ATM"}, tip: "Porta contanti sufficienti, i bancomat scarseggiano." 
+            },
+            { 
+                id: 'kohchang', name: "Koh Chang", region: "Est (Golfo)", latLng: "12.0435,102.2965", category: "Avventura", image: IMAGES.kohchang, price: "€-€€", tags: ["Montagna", "Giungla"], desc: "L'isola Elefante. Grande, montuosa e selvaggia. Offre tutto: dai party ai resort di lusso.", 
+                highlights: [
+                    {t: "Salak Phet", d: "Mangrovie lato est (tranquillo)."}, 
+                    {t: "Lonely Beach", d: "Vibe backpacker e feste."},
+                    {t: "White Sand Beach", d: "Spiaggia lunga servita."}
+                ], risk: null, tip: "Attenzione alla guida in scooter, le salite sono ripide e pericolose." 
+            },
+            { 
+                id: 'chiangmai', name: "Chiang Mai", region: "Nord", latLng: "18.7883,98.9853", category: "Cultura", image: IMAGES.chiangmai, price: "€", tags: ["Templi", "Smog"], desc: "La Rosa del Nord. A Marzo è sconsigliata per via dei fumi agricoli che coprono la vista.", 
+                highlights: [
+                    {t: "Doi Suthep", d: "Tempio dorato (vista fosca)."}, 
+                    {t: "Sunday Market", d: "Mercato immenso."},
+                    {t: "Città Vecchia", d: "Centinaia di templi."}
+                ], risk: {type: "health", msg: "BURNING SEASON"}, tip: "Se decidi di andare, porta mascherine N95 e controlla AQI ogni ora." 
+            },
+            { 
+                id: 'chiangrai', name: "Chiang Rai", region: "Nord", latLng: "19.9105,99.8406", category: "Arte", image: IMAGES.chiangrai, price: "€", tags: ["Arte", "Templi"], desc: "Famosa per i templi d'artista: Bianco, Blu e Nero. Anche qui l'aria è pessima a Marzo.", 
+                highlights: [
+                    {t: "Trekking Lahu", d: "Pernottamento autentico nel villaggio."}, 
+                    {t: "Tempio Bianco", d: "Arte visionaria contemporanea."},
+                    {t: "Triangolo d'Oro", d: "Confine con Laos e Myanmar."}
+                ], risk: {type: "health", msg: "BURNING SEASON"}, tip: "Vai al Tempio Bianco all'apertura (8:00) per le foto senza folla." 
+            },
+            { 
+                id: 'huai_kha_khaeng', name: "Huai Kha Khaeng", region: "Ovest", latLng: "15.5997,99.3175", category: "Natura", image: IMAGES.huaikhakhaeng, price: "€€", tags: ["UNESCO", "Tigri"], desc: "Per veri esploratori. Patrimonio UNESCO, ospita la più grande popolazione di tigri della Thailandia.", 
+                highlights: [
+                    {t: "Safari Fotografico", d: "Natura incontaminata."}, 
+                    {t: "Fauna Rara", d: "Bufali selvatici e tigri."},
+                    {t: "Isolamento", d: "Zero turisti."}
+                ], risk: {type: "logistics", msg: "Guida Obbligatoria"}, tip: "Non è turistico. Serve una guida specializzata." 
+            }
+        ];
+
+        // --- COMPONENTS ---
+
+        const Icon = ({ name, size = 16, className = "", fill = "none" }) => {
+            const icons = window.lucide?.icons || {};
+            
+            let iconData = icons[name];
+            
+            if (!iconData) {
+                 const kebabName = name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+                 iconData = icons[kebabName];
+            }
+            if (!iconData) {
+                const camelName = name.charAt(0).toLowerCase() + name.slice(1);
+                iconData = icons[camelName];
+            }
+            if (!iconData) {
+                const pascalName = name.charAt(0).toUpperCase() + name.slice(1);
+                iconData = icons[pascalName];
+            }
+
+            if (!iconData) return null;
+            
+            const [attrs, children] = iconData;
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    {children.map((child, i) => {
+                        const [tag, childAttrs] = child;
+                        const reactAttrs = {};
+                        for (const [key, value] of Object.entries(childAttrs || {})) {
+                            reactAttrs[key.replace(/-([a-z])/g, (g) => g[1].toUpperCase())] = value;
+                        }
+                        return React.createElement(tag, { key: i, ...reactAttrs });
+                    })}
+                </svg>
+            );
+        };
+
+        // --- DIRECT SVG HEART FOR RELIABILITY ---
+        const HeartIcon = ({ filled, className, size = 20 }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width={size} 
+                height={size} 
+                viewBox="0 0 24 24" 
+                fill={filled ? "currentColor" : "none"} 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className={className}
+            >
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            </svg>
+        );
+
+        const Toast = ({ message, show }) => (
+            <div className={`fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl z-[100] transition-all duration-300 flex items-center gap-3 ${show ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
+                <Icon name="CheckCircle" className="text-emerald-400" size={20} />
+                <span className="font-bold text-sm">{message}</span>
+            </div>
+        );
+
+        const RiskBadge = ({ risk }) => {
+            if (!risk) return null;
+            const style = risk.type === 'health' 
+                ? 'bg-red-50 text-red-700 border-red-200' 
+                : risk.type === 'monitor' ? 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                : 'bg-slate-100 text-slate-700 border-slate-200';
+            
+            return (
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold border uppercase tracking-wide w-fit ${style}`}>
+                    <Icon name={risk.type === 'health' ? "AlertTriangle" : "Info"} size={12} />
+                    {risk.msg}
+                </div>
+            );
+        };
+
+        // --- VIEWS ---
+
+        const StrategyView = ({ setActiveTab }) => (
+            <div className="max-w-5xl mx-auto pb-24 animate-slide-up">
+                <div className="hero-gradient text-white rounded-3xl p-8 md:p-12 shadow-2xl mb-8 relative overflow-hidden">
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-2 mb-4 text-emerald-400 font-bold uppercase tracking-widest text-xs">
+                            <Icon name="Map" size={14} /> Master Plan 2026
+                        </div>
+                        <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
+                            Thailandia: <span className="text-emerald-400">Marzo & Aprile</span>
+                        </h1>
+                        <p className="text-slate-300 text-lg leading-relaxed mb-8 max-w-2xl">
+                            Analisi climatica strategica per massimizzare l'esperienza ed evitare i rischi ambientali (Burning Season e Monsoni).
+                        </p>
+                        <button onClick={() => setActiveTab('explore')} className="bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+                            Pianifica Itinerario <Icon name="ArrowRight" size={18} />
+                        </button>
+                    </div>
+                    {/* Abstract Decor */}
+                    <div className="absolute right-0 top-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-200 transition-colors">
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600"><Icon name="ThumbsUp" size={20} /></div>
+                                <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-1 rounded">OTTIMALE</span>
+                            </div>
+                            <h3 className="font-bold text-slate-800 text-lg">Andamane & Isole</h3>
+                            <p className="text-xs text-slate-500 mt-2">Ultimo mese di mare perfetto prima dei monsoni. Acqua cristallina a Krabi, Lipe e Similan.</p>
+                        </div>
+                        
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-200 transition-colors">
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="bg-blue-100 p-2 rounded-lg text-blue-600"><Icon name="Building2" size={20} /></div>
+                                <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded">STABILE</span>
+                            </div>
+                            <h3 className="font-bold text-slate-800 text-lg">Bangkok & Centro</h3>
+                            <p className="text-xs text-slate-500 mt-2">Caldo secco gestibile. Ideale per cultura e gastronomia nelle ore mattutine.</p>
+                        </div>
+
+                        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-red-200 transition-colors md:col-span-2">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="bg-red-100 p-2 rounded-lg text-red-600"><Icon name="AlertTriangle" size={20} /></div>
+                                <h3 className="font-bold text-slate-800 text-lg">Nord (Chiang Mai/Rai)</h3>
+                            </div>
+                            <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-lg">
+                                <p className="text-xs text-red-800 font-bold flex justify-between">
+                                    <span>RISCHIO SALUTE ALTO (PM 2.5)</span>
+                                    <span>AQI > 200</span>
+                                </p>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-2">
+                                La "Burning Season" rende l'aria tossica e azzera la visibilità. <span className="font-bold text-slate-900">Sconsigliato senza protezioni.</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-slate-900 text-slate-300 p-6 rounded-2xl flex flex-col justify-between relative overflow-hidden">
+                         <div className="relative z-10">
+                            <h3 className="font-bold text-white text-xl mb-4">Eventi Key</h3>
+                            <ul className="space-y-4">
+                                <li className="flex gap-4 items-center">
+                                    <div className="bg-white/10 w-12 h-12 rounded-lg flex flex-col items-center justify-center flex-shrink-0 text-white font-bold leading-none">
+                                        <span className="text-[10px] opacity-70">APR</span>13
+                                    </div>
+                                    <div>
+                                        <strong className="block text-white text-sm">Songkran Festival</strong>
+                                        <span className="text-xs opacity-70">Capodanno Thai (Water Fight)</span>
+                                    </div>
+                                </li>
+                                <li className="flex gap-4 items-center">
+                                    <div className="bg-white/10 w-12 h-12 rounded-lg flex flex-col items-center justify-center flex-shrink-0 text-white font-bold leading-none">
+                                        <span className="text-[10px] opacity-70">MAR</span>17
+                                    </div>
+                                    <div>
+                                        <strong className="block text-white text-sm">Muay Thai Day</strong>
+                                        <span className="text-xs opacity-70">Ayutthaya World Ceremony</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const ExploreView = ({ filter, setFilter, filteredDestinations, savedIds, toggleSave, selectedDest, setSelectedDest, isFavoritesMode = false }) => {
+            const [mapQuery, setMapQuery] = useState('');
+            const [selectedHighlight, setSelectedHighlight] = useState(null);
+
+            // Update map when destination changes
+            useEffect(() => {
+                if (selectedDest) {
+                    setMapQuery(selectedDest.latLng);
+                    setSelectedHighlight(null);
+                }
+            }, [selectedDest]);
+
+            // Handle highlight click to pin on map
+            const handleHighlightClick = (highlight) => {
+                const query = `${highlight.t}, ${selectedDest.name}, Thailand`;
+                setMapQuery(query);
+                setSelectedHighlight(highlight.t);
+            };
+
+            const handleResetMap = () => {
+                setMapQuery(selectedDest.latLng);
+                setSelectedHighlight(null);
+            };
+
+            return (
+                <div className="h-[calc(100vh-140px)] flex flex-col md:flex-row gap-6 animate-slide-up">
+                    {/* LISTA */}
+                    <div className="w-full md:w-5/12 flex flex-col h-full">
+                        {/* Filters - Hide in Favorites Mode */}
+                        {!isFavoritesMode && (
+                            <div className="flex gap-2 overflow-x-auto pb-4 pt-1 flex-shrink-0 no-scrollbar px-1">
+                                {['All', 'Mare', 'Cultura', 'Natura', 'Rischio'].map(f => (
+                                    <button key={f} onClick={() => setFilter(f)}
+                                        className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border flex items-center gap-2 ${
+                                            filter === f ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                                        }`}>
+                                        {f}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                        
+                        {/* Favorites Header if mode is on */}
+                        {isFavoritesMode && (
+                            <div className="pb-4 pt-1 px-1">
+                                <h2 className="text-2xl font-bold text-slate-900">I tuoi Preferiti</h2>
+                                <p className="text-slate-500 text-sm">{savedIds.length} destinazioni salvate</p>
+                            </div>
+                        )}
+
+                        {/* Cards */}
+                        <div className="overflow-y-auto pr-2 space-y-3 flex-1 pb-24 md:pb-0 custom-scroll">
+                            {filteredDestinations.length === 0 ? (
+                                <div className="text-center py-12 opacity-50 flex flex-col items-center">
+                                    <div className="bg-slate-100 p-4 rounded-full mb-4">
+                                        <Icon name={isFavoritesMode ? "Heart" : "Map"} size={32} className="text-slate-400" />
+                                    </div>
+                                    <h3 className="font-bold text-slate-700">{isFavoritesMode ? "Nessun preferito" : "Nessuna destinazione"}</h3>
+                                    <p className="text-sm text-slate-500 max-w-xs mx-auto mt-2">
+                                        {isFavoritesMode 
+                                            ? "Salva le destinazioni che ti ispirano cliccando sul cuore." 
+                                            : "Prova a cambiare i filtri di ricerca."}
+                                    </p>
+                                </div>
+                            ) : filteredDestinations.map(d => (
+                                <div key={d.id} 
+                                    onClick={() => setSelectedDest(d)}
+                                    className={`bg-white p-3 rounded-xl border transition-all cursor-pointer group relative ${
+                                        selectedDest?.id === d.id ? 'border-emerald-500 ring-1 ring-emerald-500 shadow-md' : 'border-slate-200 hover:border-slate-300'
+                                    }`}>
+                                    <div className="flex gap-4">
+                                        <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 relative">
+                                            <img src={d.image} alt={d.name} className="w-full h-full object-cover" loading="lazy" />
+                                            {/* FIXED: Replaced generic Icon with direct SVG HeartIcon for reliability */}
+                                            <button onClick={(e) => { e.stopPropagation(); toggleSave(d.id); }} 
+                                                className="absolute top-1 right-1 w-8 h-8 bg-white border border-slate-100 rounded-full flex items-center justify-center shadow-md z-10 active:scale-90 transition-transform">
+                                                <HeartIcon 
+                                                    filled={savedIds.includes(d.id)} 
+                                                    size={16}
+                                                    className={savedIds.includes(d.id) ? "text-red-600" : "text-slate-900"} 
+                                                />
+                                            </button>
+                                            
+                                            {d.risk?.type === 'health' && (
+                                                <div className="absolute inset-0 bg-red-900/20 flex items-center justify-center pointer-events-none">
+                                                    <Icon name="AlertTriangle" className="text-white drop-shadow-md" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0 py-1">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h4 className="font-bold text-slate-900 truncate pr-2">{d.name}</h4>
+                                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{d.region}</p>
+                                                </div>
+                                            </div>
+                                            <RiskBadge risk={d.risk} />
+                                            {!d.risk && <p className="text-xs text-slate-500 mt-2 line-clamp-2">{d.desc}</p>}
+                                            <div className="mt-2 flex gap-2 text-[10px] font-medium text-slate-400">
+                                                <span className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{d.price}</span>
+                                                <span className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{d.tags[0]}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* DETTAGLIO (Desktop) */}
+                    <div className="hidden md:flex md:w-7/12 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden flex-col h-full relative">
+                        {selectedDest ? (
+                            <>
+                                <div className="h-72 relative flex-shrink-0 group">
+                                    <img src={selectedDest.image} className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-90"></div>
+                                    <div className="absolute top-6 right-6 z-20">
+                                        <button onClick={() => toggleSave(selectedDest.id)} className="bg-white shadow-xl p-3 rounded-full transition-all hover:scale-105 active:scale-95 border border-slate-100">
+                                            <HeartIcon 
+                                                filled={savedIds.includes(selectedDest.id)} 
+                                                size={24}
+                                                className={savedIds.includes(selectedDest.id) ? "text-red-600" : "text-slate-900"} 
+                                            />
+                                        </button>
+                                    </div>
+                                    <div className="absolute bottom-6 left-8 text-white max-w-lg">
+                                        <div className="flex gap-2 mb-3">
+                                            {selectedDest.tags.map(t => (
+                                                <span key={t} className="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide">{t}</span>
+                                            ))}
+                                        </div>
+                                        <h2 className="text-4xl font-bold mb-2">{selectedDest.name}</h2>
+                                        <p className="opacity-90 text-sm leading-relaxed">{selectedDest.desc}</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex-1 overflow-y-auto p-8 bg-white">
+                                    <div className="grid grid-cols-2 gap-8 mb-8">
+                                        <div>
+                                            <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider mb-4 border-b pb-2">Highlights Interattivi</h3>
+                                            <p className="text-[10px] text-slate-400 mb-3">Clicca per pinnare sulla mappa</p>
+                                            <div className="space-y-3">
+                                                {selectedDest.highlights.map((h, i) => (
+                                                    <div 
+                                                        key={i} 
+                                                        onClick={() => handleHighlightClick(h)}
+                                                        className={`flex gap-3 p-2 rounded-lg cursor-pointer transition-all border ${selectedHighlight === h.t ? 'bg-emerald-50 border-emerald-500 shadow-sm' : 'border-transparent hover:bg-slate-50 hover:border-slate-200'}`}
+                                                    >
+                                                        <div className={`mt-1 ${selectedHighlight === h.t ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                                            <Icon name="MapPin" size={16} fill={selectedHighlight === h.t ? "currentColor" : "none"} />
+                                                        </div>
+                                                        <div>
+                                                            <strong className={`block text-sm ${selectedHighlight === h.t ? 'text-emerald-900' : 'text-slate-800'}`}>{h.t}</strong>
+                                                            <span className="text-xs text-slate-500">{h.d}</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider mb-4 border-b pb-2">Insider Tip</h3>
+                                            <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                                <p className="text-indigo-900 text-sm italic leading-relaxed">"{selectedDest.tip}"</p>
+                                            </div>
+                                            <div className="mt-6">
+                                                <RiskBadge risk={selectedDest.risk} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="h-48 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 relative group">
+                                        {/* Dynamic Map Iframe */}
+                                        <iframe width="100%" height="100%" frameBorder="0" scrolling="no" 
+                                            src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=${selectedHighlight ? 14 : 10}&ie=UTF8&iwloc=&output=embed`} 
+                                            className="transition-opacity">
+                                        </iframe>
+                                        
+                                        {selectedHighlight && (
+                                            <button 
+                                                onClick={handleResetMap}
+                                                className="absolute bottom-3 left-3 bg-white text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-slate-50 z-10"
+                                            >
+                                                <Icon name="Undo2" size={12} /> Reset Vista
+                                            </button>
+                                        )}
+
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`} target="_blank" className="absolute bottom-3 right-3 bg-white text-slate-900 px-4 py-2 rounded-lg text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-slate-50">
+                                            Apri Maps <Icon name="ExternalLink" size={12} />
+                                        </a>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-slate-300">
+                                <Icon name="MapPin" size={64} className="mb-4 opacity-50" />
+                                <p>Seleziona una destinazione</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- APP CONTROLLER ---
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('strategy');
+            const [filter, setFilter] = useState('All');
+            const [savedIds, setSavedIds] = useState(() => {
+                const saved = localStorage.getItem('thai_saved');
+                return saved ? JSON.parse(saved) : [];
+            });
+            const [selectedDest, setSelectedDest] = useState(null);
+            const [toast, setToast] = useState({ show: false, msg: '' });
+
+            // Persistenza
+            useEffect(() => {
+                localStorage.setItem('thai_saved', JSON.stringify(savedIds));
+            }, [savedIds]);
+
+            // Auto-select first item on desktop
+            useEffect(() => {
+                if (!selectedDest && window.innerWidth >= 768) {
+                    setSelectedDest(DESTINATIONS[0]);
+                }
+            }, []);
+
+            const toggleSave = useCallback((id) => {
+                setSavedIds(prev => {
+                    const isSaved = prev.includes(id);
+                    const newSaved = isSaved ? prev.filter(x => x !== id) : [...prev, id];
+                    setToast({ show: true, msg: isSaved ? 'Rimosso dai preferiti' : 'Salvato nei preferiti' });
+                    setTimeout(() => setToast(prev => ({ ...prev, show: false })), 2000);
+                    return newSaved;
+                });
+            }, []);
+
+            const filteredDestinations = useMemo(() => {
+                let data = DESTINATIONS;
+                if (activeTab === 'favorites') {
+                    // Logic for favorites tab: Show ONLY saved
+                    return data.filter(d => savedIds.includes(d.id));
+                }
+                
+                // Logic for Explore tab
+                if (filter === 'Rischio') data = data.filter(d => d.risk);
+                else if (filter !== 'All') data = data.filter(d => d.category.includes(filter) || d.region.includes(filter));
+                
+                return data;
+            }, [filter, savedIds, activeTab]);
+
+            return (
+                <div className="min-h-screen bg-slate-50 text-slate-900 pb-20 md:pb-0">
+                    {/* Header */}
+                    <div className="glass-panel sticky top-0 z-40 px-6 py-4 flex justify-between items-center shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-slate-900 text-white p-2 rounded-xl shadow-lg">
+                                <Icon name="Palmtree" size={20} />
+                            </div>
+                            <div>
+                                <h1 className="text-lg font-bold leading-none tracking-tight">ThaiPlanner</h1>
+                                <span className="text-[10px] font-bold text-emerald-600 tracking-wider uppercase">Marzo '26</span>
+                            </div>
+                        </div>
+                        <div className="hidden md:flex bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
+                            {[
+                                {id: 'strategy', label: 'Strategy', icon: 'LayoutDashboard'},
+                                {id: 'explore', label: 'Esplora', icon: 'Map'},
+                                {id: 'favorites', label: 'Preferiti', icon: 'Heart'},
+                            ].map(t => (
+                                <button key={t.id} onClick={() => setActiveTab(t.id)}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${activeTab === t.id ? 'bg-slate-900 text-white shadow' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
+                                    <Icon name={t.icon} size={14} fill={t.id === 'favorites' && activeTab === 'favorites' ? "currentColor" : "none"} /> {t.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <main className="p-4 md:p-6 max-w-7xl mx-auto">
+                        {activeTab === 'strategy' && <StrategyView setActiveTab={setActiveTab} />}
+                        
+                        {(activeTab === 'explore' || activeTab === 'favorites') && (
+                            <ExploreView 
+                                isFavoritesMode={activeTab === 'favorites'}
+                                filter={filter} 
+                                setFilter={setFilter} 
+                                filteredDestinations={filteredDestinations}
+                                savedIds={savedIds}
+                                toggleSave={toggleSave}
+                                selectedDest={selectedDest}
+                                setSelectedDest={setSelectedDest}
+                            />
+                        )}
+                    </main>
+
+                    {/* Mobile Detail Modal */}
+                    {selectedDest && window.innerWidth < 768 && (
+                        <div className="fixed inset-0 z-[60] bg-white animate-slide-up overflow-y-auto">
+                            <div className="relative h-72">
+                                <img src={selectedDest.image} className="w-full h-full object-cover" />
+                                <button onClick={() => setSelectedDest(null)} className="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full backdrop-blur-md z-20">
+                                    <Icon name="X" size={20} />
+                                </button>
+                                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent text-white pt-20">
+                                    <h2 className="text-3xl font-bold mb-1">{selectedDest.name}</h2>
+                                    <div className="flex gap-2">
+                                        <span className="text-xs bg-emerald-500 px-2 py-0.5 rounded font-bold">{selectedDest.category}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="p-6 space-y-6">
+                                <div className="flex justify-between items-center">
+                                    <RiskBadge risk={selectedDest.risk} />
+                                    <button onClick={() => toggleSave(selectedDest.id)} className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm border transition-all ${savedIds.includes(selectedDest.id) ? 'bg-red-50 text-red-600 border-red-200' : 'bg-slate-900 text-white border-slate-900'}`}>
+                                        <HeartIcon filled={savedIds.includes(selectedDest.id)} size={16} className={savedIds.includes(selectedDest.id) ? "text-red-600" : "text-white"} />
+                                        {savedIds.includes(selectedDest.id) ? 'Salvato' : 'Salva nei preferiti'}
+                                    </button>
+                                </div>
+                                
+                                <p className="text-slate-600 leading-relaxed text-sm">{selectedDest.desc}</p>
+                                
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <h4 className="font-bold text-sm mb-3 flex items-center gap-2"><Icon name="Sparkles" size={14} className="text-amber-500"/> Highlights</h4>
+                                    <ul className="space-y-3">
+                                        {selectedDest.highlights.map((h, i) => (
+                                            <li key={i} className="text-sm">
+                                                <strong className="block text-slate-900">{h.t}</strong>
+                                                <span className="text-slate-500 text-xs">{h.d}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                    <h4 className="font-bold text-indigo-900 text-sm mb-1 flex items-center gap-2">
+                                        <Icon name="Lightbulb" size={14} /> Insider Tip
+                                    </h4>
+                                    <p className="text-indigo-800 text-xs italic">"{selectedDest.tip}"</p>
+                                </div>
+
+                                <div className="h-48 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 relative pb-safe">
+                                     <iframe width="100%" height="100%" frameBorder="0" scrolling="no" 
+                                        src={`https://maps.google.com/maps?q=${selectedDest.latLng}&t=&z=10&ie=UTF8&iwloc=&output=embed`}>
+                                    </iframe>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Mobile Tab Bar */}
+                    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around p-3 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+                        {[
+                            {id: 'strategy', label: 'Strategy', icon: 'LayoutDashboard'},
+                            {id: 'explore', label: 'Esplora', icon: 'Map'},
+                            {id: 'favorites', label: 'Preferiti', icon: 'Heart'},
+                        ].map(t => (
+                            <button key={t.id} onClick={() => { setActiveTab(t.id); if(t.id !== activeTab) setSelectedDest(null); }}
+                                className={`flex flex-col items-center gap-1 transition-colors w-16 ${activeTab === t.id ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                <Icon name={t.icon} size={22} strokeWidth={activeTab === t.id ? 2.5 : 2} fill={t.id === 'favorites' && activeTab === 'favorites' ? "currentColor" : "none"} />
+                                <span className="text-[10px] font-bold">{t.label}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    <Toast show={toast.show} message={toast.msg} />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
