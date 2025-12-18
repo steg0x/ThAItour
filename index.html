@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="it">
 
 <head>
@@ -33,6 +33,7 @@
             color: #0f172a;
             -webkit-font-smoothing: antialiased;
             overscroll-behavior-y: none;
+            font-size: 16px; /* Base font size increased */
         }
 
         /* Utilities */
@@ -298,8 +299,8 @@
                 : 'bg-slate-100 text-slate-700 border-slate-200';
             
             return (
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold border uppercase tracking-wide w-fit ${style}`}>
-                    <Icon name={risk.type === 'health' ? "AlertTriangle" : "Info"} size={12} />
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border uppercase tracking-wide w-fit ${style}`}>
+                    <Icon name={risk.type === 'health' ? "AlertTriangle" : "Info"} size={14} />
                     {risk.msg}
                 </div>
             );
@@ -333,33 +334,33 @@
                         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-200 transition-colors">
                             <div className="flex justify-between items-start mb-3">
                                 <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600"><Icon name="ThumbsUp" size={20} /></div>
-                                <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-1 rounded">OTTIMALE</span>
+                                <span className="text-xs font-bold bg-emerald-50 text-emerald-700 px-2 py-1 rounded">OTTIMALE</span>
                             </div>
-                            <h3 className="font-bold text-slate-800 text-lg">Andamane & Isole</h3>
-                            <p className="text-xs text-slate-500 mt-2">Ultimo mese di mare perfetto prima dei monsoni. Acqua cristallina a Krabi, Lipe e Similan.</p>
+                            <h3 className="font-bold text-slate-800 text-xl">Andamane & Isole</h3>
+                            <p className="text-sm text-slate-500 mt-2">Ultimo mese di mare perfetto prima dei monsoni. Acqua cristallina a Krabi, Lipe e Similan.</p>
                         </div>
                         
                         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-200 transition-colors">
                             <div className="flex justify-between items-start mb-3">
                                 <div className="bg-blue-100 p-2 rounded-lg text-blue-600"><Icon name="Building2" size={20} /></div>
-                                <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded">STABILE</span>
+                                <span className="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded">STABILE</span>
                             </div>
-                            <h3 className="font-bold text-slate-800 text-lg">Bangkok & Centro</h3>
-                            <p className="text-xs text-slate-500 mt-2">Caldo secco gestibile. Ideale per cultura e gastronomia nelle ore mattutine.</p>
+                            <h3 className="font-bold text-slate-800 text-xl">Bangkok & Centro</h3>
+                            <p className="text-sm text-slate-500 mt-2">Caldo secco gestibile. Ideale per cultura e gastronomia nelle ore mattutine.</p>
                         </div>
 
                         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-red-200 transition-colors md:col-span-2">
                             <div className="flex items-center gap-3 mb-3">
                                 <div className="bg-red-100 p-2 rounded-lg text-red-600"><Icon name="AlertTriangle" size={20} /></div>
-                                <h3 className="font-bold text-slate-800 text-lg">Nord (Chiang Mai/Rai)</h3>
+                                <h3 className="font-bold text-slate-800 text-xl">Nord (Chiang Mai/Rai)</h3>
                             </div>
                             <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-lg">
-                                <p className="text-xs text-red-800 font-bold flex justify-between">
+                                <p className="text-sm text-red-800 font-bold flex justify-between">
                                     <span>RISCHIO SALUTE ALTO (PM 2.5)</span>
                                     <span>AQI > 200</span>
                                 </p>
                             </div>
-                            <p className="text-xs text-slate-500 mt-2">
+                            <p className="text-sm text-slate-500 mt-2">
                                 La "Burning Season" rende l'aria tossica e azzera la visibilità. <span className="font-bold text-slate-900">Sconsigliato senza protezioni.</span>
                             </p>
                         </div>
@@ -371,7 +372,7 @@
                             <ul className="space-y-4">
                                 <li className="flex gap-4 items-center">
                                     <div className="bg-white/10 w-12 h-12 rounded-lg flex flex-col items-center justify-center flex-shrink-0 text-white font-bold leading-none">
-                                        <span className="text-[10px] opacity-70">APR</span>13
+                                        <span className="text-xs opacity-70">APR</span>13
                                     </div>
                                     <div>
                                         <strong className="block text-white text-sm">Songkran Festival</strong>
@@ -380,7 +381,7 @@
                                 </li>
                                 <li className="flex gap-4 items-center">
                                     <div className="bg-white/10 w-12 h-12 rounded-lg flex flex-col items-center justify-center flex-shrink-0 text-white font-bold leading-none">
-                                        <span className="text-[10px] opacity-70">MAR</span>17
+                                        <span className="text-xs opacity-70">MAR</span>17
                                     </div>
                                     <div>
                                         <strong className="block text-white text-sm">Muay Thai Day</strong>
@@ -439,13 +440,13 @@
                         {/* Favorites Header if mode is on */}
                         {isFavoritesMode && (
                             <div className="pb-4 pt-1 px-1">
-                                <h2 className="text-2xl font-bold text-slate-900">I tuoi Preferiti</h2>
+                                <h2 className="text-3xl font-bold text-slate-900">I tuoi Preferiti</h2>
                                 <p className="text-slate-500 text-sm">{savedIds.length} destinazioni salvate</p>
                             </div>
                         )}
 
                         {/* Cards */}
-                        <div className="overflow-y-auto pr-2 space-y-3 flex-1 pb-24 md:pb-0 custom-scroll">
+                        <div className="overflow-y-auto pr-2 space-y-4 flex-1 pb-24 md:pb-0 custom-scroll">
                             {filteredDestinations.length === 0 ? (
                                 <div className="text-center py-12 opacity-50 flex flex-col items-center">
                                     <div className="bg-slate-100 p-4 rounded-full mb-4">
@@ -461,7 +462,7 @@
                             ) : filteredDestinations.map(d => (
                                 <div key={d.id} 
                                     onClick={() => setSelectedDest(d)}
-                                    className={`bg-white p-3 rounded-xl border transition-all cursor-pointer group relative ${
+                                    className={`bg-white p-4 rounded-xl border transition-all cursor-pointer group relative ${
                                         selectedDest?.id === d.id ? 'border-emerald-500 ring-1 ring-emerald-500 shadow-md' : 'border-slate-200 hover:border-slate-300'
                                     }`}>
                                     <div className="flex gap-4">
@@ -486,15 +487,15 @@
                                         <div className="flex-1 min-w-0 py-1">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <h4 className="font-bold text-slate-900 truncate pr-2">{d.name}</h4>
-                                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{d.region}</p>
+                                                    <h4 className="font-bold text-lg text-slate-900 truncate pr-2">{d.name}</h4>
+                                                    <p className="text-xs uppercase font-bold text-slate-400 tracking-wider mb-1">{d.region}</p>
                                                 </div>
                                             </div>
                                             <RiskBadge risk={d.risk} />
-                                            {!d.risk && <p className="text-xs text-slate-500 mt-2 line-clamp-2">{d.desc}</p>}
-                                            <div className="mt-2 flex gap-2 text-[10px] font-medium text-slate-400">
-                                                <span className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{d.price}</span>
-                                                <span className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{d.tags[0]}</span>
+                                            {!d.risk && <p className="text-sm text-slate-500 mt-2 line-clamp-2">{d.desc}</p>}
+                                            <div className="mt-2 flex gap-2 text-xs font-medium text-slate-400">
+                                                <span className="bg-slate-50 px-2 py-1 rounded border border-slate-100">{d.price}</span>
+                                                <span className="bg-slate-50 px-2 py-1 rounded border border-slate-100">{d.tags[0]}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -522,7 +523,7 @@
                                     <div className="absolute bottom-6 left-8 text-white max-w-lg">
                                         <div className="flex gap-2 mb-3">
                                             {selectedDest.tags.map(t => (
-                                                <span key={t} className="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide">{t}</span>
+                                                <span key={t} className="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">{t}</span>
                                             ))}
                                         </div>
                                         <h2 className="text-4xl font-bold mb-2">{selectedDest.name}</h2>
@@ -534,16 +535,16 @@
                                     <div className="grid grid-cols-2 gap-8 mb-8">
                                         <div>
                                             <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider mb-4 border-b pb-2">Highlights Interattivi</h3>
-                                            <p className="text-[10px] text-slate-400 mb-3">Clicca per pinnare sulla mappa</p>
+                                            <p className="text-xs text-slate-400 mb-3">Clicca per pinnare sulla mappa</p>
                                             <div className="space-y-3">
                                                 {selectedDest.highlights.map((h, i) => (
                                                     <div 
                                                         key={i} 
                                                         onClick={() => handleHighlightClick(h)}
-                                                        className={`flex gap-3 p-2 rounded-lg cursor-pointer transition-all border ${selectedHighlight === h.t ? 'bg-emerald-50 border-emerald-500 shadow-sm' : 'border-transparent hover:bg-slate-50 hover:border-slate-200'}`}
+                                                        className={`flex gap-3 p-3 rounded-lg cursor-pointer transition-all border ${selectedHighlight === h.t ? 'bg-emerald-50 border-emerald-500 shadow-sm' : 'border-transparent hover:bg-slate-50 hover:border-slate-200'}`}
                                                     >
                                                         <div className={`mt-1 ${selectedHighlight === h.t ? 'text-emerald-600' : 'text-slate-400'}`}>
-                                                            <Icon name="MapPin" size={16} fill={selectedHighlight === h.t ? "currentColor" : "none"} />
+                                                            <Icon name="MapPin" size={20} fill={selectedHighlight === h.t ? "currentColor" : "none"} />
                                                         </div>
                                                         <div>
                                                             <strong className={`block text-sm ${selectedHighlight === h.t ? 'text-emerald-900' : 'text-slate-800'}`}>{h.t}</strong>
@@ -608,6 +609,10 @@
             const [selectedDest, setSelectedDest] = useState(null);
             const [toast, setToast] = useState({ show: false, msg: '' });
 
+            // State specific to mobile modal for interactive map
+            const [mobileMapQuery, setMobileMapQuery] = useState('');
+            const [mobileSelectedHighlight, setMobileSelectedHighlight] = useState(null);
+
             // Persistenza
             useEffect(() => {
                 localStorage.setItem('thai_saved', JSON.stringify(savedIds));
@@ -619,6 +624,25 @@
                     setSelectedDest(DESTINATIONS[0]);
                 }
             }, []);
+
+            // Mobile Map Logic
+            useEffect(() => {
+                if (selectedDest) {
+                    setMobileMapQuery(selectedDest.latLng);
+                    setMobileSelectedHighlight(null);
+                }
+            }, [selectedDest]);
+
+            const handleMobileHighlightClick = (highlight) => {
+                const query = `${highlight.t}, ${selectedDest.name}, Thailand`;
+                setMobileMapQuery(query);
+                setMobileSelectedHighlight(highlight.t);
+            };
+
+            const handleMobileResetMap = () => {
+                setMobileMapQuery(selectedDest.latLng);
+                setMobileSelectedHighlight(null);
+            };
 
             const toggleSave = useCallback((id) => {
                 setSavedIds(prev => {
@@ -653,8 +677,8 @@
                                 <Icon name="Palmtree" size={20} />
                             </div>
                             <div>
-                                <h1 className="text-lg font-bold leading-none tracking-tight">ThaiPlanner</h1>
-                                <span className="text-[10px] font-bold text-emerald-600 tracking-wider uppercase">Marzo '26</span>
+                                <h1 className="text-xl font-bold leading-none tracking-tight">ThaiPlanner</h1>
+                                <span className="text-xs font-bold text-emerald-600 tracking-wider uppercase">Marzo '26</span>
                             </div>
                         </div>
                         <div className="hidden md:flex bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
@@ -664,8 +688,8 @@
                                 {id: 'favorites', label: 'Preferiti', icon: 'Heart'},
                             ].map(t => (
                                 <button key={t.id} onClick={() => setActiveTab(t.id)}
-                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${activeTab === t.id ? 'bg-slate-900 text-white shadow' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
-                                    <Icon name={t.icon} size={14} fill={t.id === 'favorites' && activeTab === 'favorites' ? "currentColor" : "none"} /> {t.label}
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${activeTab === t.id ? 'bg-slate-900 text-white shadow' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
+                                    <Icon name={t.icon} size={16} fill={t.id === 'favorites' && activeTab === 'favorites' ? "currentColor" : "none"} /> {t.label}
                                 </button>
                             ))}
                         </div>
@@ -693,66 +717,91 @@
                         <div className="fixed inset-0 z-[60] bg-white animate-slide-up overflow-y-auto">
                             <div className="relative h-72">
                                 <img src={selectedDest.image} className="w-full h-full object-cover" />
-                                <button onClick={() => setSelectedDest(null)} className="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full backdrop-blur-md z-20">
-                                    <Icon name="X" size={20} />
+                                
+                                {/* UPDATED CLOSE BUTTON: Larger, High Contrast, Safely Positioned */}
+                                <button onClick={() => setSelectedDest(null)} 
+                                    className="absolute top-6 right-6 bg-white text-slate-900 p-3 rounded-full shadow-xl z-50 border border-slate-100 hover:scale-110 active:scale-95 transition-all">
+                                    <Icon name="X" size={24} />
                                 </button>
+                                
                                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent text-white pt-20">
-                                    <h2 className="text-3xl font-bold mb-1">{selectedDest.name}</h2>
+                                    <h2 className="text-4xl font-bold mb-1">{selectedDest.name}</h2>
                                     <div className="flex gap-2">
                                         <span className="text-xs bg-emerald-500 px-2 py-0.5 rounded font-bold">{selectedDest.category}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-6 space-y-6">
+                            <div className="p-6 space-y-8">
                                 <div className="flex justify-between items-center">
                                     <RiskBadge risk={selectedDest.risk} />
-                                    <button onClick={() => toggleSave(selectedDest.id)} className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm border transition-all ${savedIds.includes(selectedDest.id) ? 'bg-red-50 text-red-600 border-red-200' : 'bg-slate-900 text-white border-slate-900'}`}>
-                                        <HeartIcon filled={savedIds.includes(selectedDest.id)} size={16} className={savedIds.includes(selectedDest.id) ? "text-red-600" : "text-white"} />
-                                        {savedIds.includes(selectedDest.id) ? 'Salvato' : 'Salva nei preferiti'}
+                                    <button onClick={() => toggleSave(selectedDest.id)} className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm border transition-all shadow-sm ${savedIds.includes(selectedDest.id) ? 'bg-red-50 text-red-600 border-red-200' : 'bg-slate-900 text-white border-slate-900'}`}>
+                                        <HeartIcon filled={savedIds.includes(selectedDest.id)} size={18} className={savedIds.includes(selectedDest.id) ? "text-red-600" : "text-white"} />
+                                        {savedIds.includes(selectedDest.id) ? 'Salvato' : 'Salva'}
                                     </button>
                                 </div>
                                 
-                                <p className="text-slate-600 leading-relaxed text-sm">{selectedDest.desc}</p>
+                                <p className="text-slate-700 leading-relaxed text-base">{selectedDest.desc}</p>
                                 
-                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                    <h4 className="font-bold text-sm mb-3 flex items-center gap-2"><Icon name="Sparkles" size={14} className="text-amber-500"/> Highlights</h4>
-                                    <ul className="space-y-3">
-                                        {selectedDest.highlights.map((h, i) => (
-                                            <li key={i} className="text-sm">
-                                                <strong className="block text-slate-900">{h.t}</strong>
-                                                <span className="text-slate-500 text-xs">{h.d}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                                    <h4 className="font-bold text-indigo-900 text-sm mb-1 flex items-center gap-2">
-                                        <Icon name="Lightbulb" size={14} /> Insider Tip
+                                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                                    <h4 className="font-bold text-sm mb-4 flex items-center gap-2 text-slate-900 uppercase tracking-wider">
+                                        <Icon name="Sparkles" size={16} className="text-amber-500"/> Highlights (Clicca)
                                     </h4>
-                                    <p className="text-indigo-800 text-xs italic">"{selectedDest.tip}"</p>
+                                    <div className="space-y-4">
+                                        {selectedDest.highlights.map((h, i) => (
+                                            <div 
+                                                key={i} 
+                                                onClick={() => handleMobileHighlightClick(h)}
+                                                className={`flex gap-3 p-3 rounded-xl cursor-pointer transition-all border ${mobileSelectedHighlight === h.t ? 'bg-white border-emerald-500 shadow-md ring-1 ring-emerald-500' : 'bg-white border-slate-200 hover:border-slate-300'}`}
+                                            >
+                                                <div className={`mt-1 ${mobileSelectedHighlight === h.t ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                                    <Icon name="MapPin" size={20} fill={mobileSelectedHighlight === h.t ? "currentColor" : "none"} />
+                                                </div>
+                                                <div>
+                                                    <strong className={`block text-sm ${mobileSelectedHighlight === h.t ? 'text-emerald-900' : 'text-slate-900'}`}>{h.t}</strong>
+                                                    <span className="text-xs text-slate-500">{h.d}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
 
-                                <div className="h-48 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 relative pb-safe">
-                                     <iframe width="100%" height="100%" frameBorder="0" scrolling="no" 
-                                        src={`https://maps.google.com/maps?q=${selectedDest.latLng}&t=&z=10&ie=UTF8&iwloc=&output=embed`}>
-                                    </iframe>
+                                <div className="bg-indigo-50 p-5 rounded-2xl border border-indigo-100">
+                                    <h4 className="font-bold text-indigo-900 text-sm mb-1 flex items-center gap-2">
+                                        <Icon name="Lightbulb" size={18} /> Insider Tip
+                                    </h4>
+                                    <p className="text-indigo-800 text-sm italic">"{selectedDest.tip}"</p>
                                 </div>
+
+                                <div className="h-64 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative shadow-inner">
+                                     <iframe width="100%" height="100%" frameBorder="0" scrolling="no" 
+                                        src={`https://maps.google.com/maps?q=${encodeURIComponent(mobileMapQuery)}&t=&z=${mobileSelectedHighlight ? 14 : 10}&ie=UTF8&iwloc=&output=embed`}
+                                        className="transition-opacity">
+                                    </iframe>
+                                    {mobileSelectedHighlight && (
+                                        <button 
+                                            onClick={handleMobileResetMap}
+                                            className="absolute bottom-3 left-3 bg-white text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-slate-50 z-10"
+                                        >
+                                            <Icon name="Undo2" size={12} /> Reset Vista
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="h-24"></div> {/* Spacer for safe area */}
                             </div>
                         </div>
                     )}
 
-                    {/* Mobile Tab Bar */}
-                    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around p-3 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+                    {/* Mobile Tab Bar - UPDATED SIZE */}
+                    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around p-4 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
                         {[
                             {id: 'strategy', label: 'Strategy', icon: 'LayoutDashboard'},
                             {id: 'explore', label: 'Esplora', icon: 'Map'},
                             {id: 'favorites', label: 'Preferiti', icon: 'Heart'},
                         ].map(t => (
                             <button key={t.id} onClick={() => { setActiveTab(t.id); if(t.id !== activeTab) setSelectedDest(null); }}
-                                className={`flex flex-col items-center gap-1 transition-colors w-16 ${activeTab === t.id ? 'text-emerald-600' : 'text-slate-400'}`}>
-                                <Icon name={t.icon} size={22} strokeWidth={activeTab === t.id ? 2.5 : 2} fill={t.id === 'favorites' && activeTab === 'favorites' ? "currentColor" : "none"} />
-                                <span className="text-[10px] font-bold">{t.label}</span>
+                                className={`flex flex-col items-center gap-1.5 transition-colors w-20 ${activeTab === t.id ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                <Icon name={t.icon} size={26} strokeWidth={activeTab === t.id ? 2.5 : 2} fill={t.id === 'favorites' && activeTab === 'favorites' ? "currentColor" : "none"} />
+                                <span className="text-xs font-bold">{t.label}</span>
                             </button>
                         ))}
                     </div>
