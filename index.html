@@ -55,6 +55,11 @@
         }
         
         .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        .highlight-active {
+            background-color: #f0fdf4; /* emerald-50 */
+            border-color: #10b981; /* emerald-500 */
+        }
     </style>
 </head>
 
@@ -85,23 +90,142 @@
         };
 
         const DESTINATIONS = [
-            { id: 'bangkok', name: "Bangkok (Mix)", region: "Centro", latLng: "13.7563,100.5018", category: "Cultura", image: IMAGES.bangkok, price: "€€", tags: ["Must-See", "Thonburi"], desc: "Il mix perfetto tra i grandi classici e l'autenticità di Thonburi.", highlights: [{t: "Grand Palace", d: "Vai all'apertura."}, {t: "Khlong Bang Luang", d: "Comunità artistica."}], risk: null, tip: "Barca bandiera arancione per muoverti." },
-            { id: 'bangkok_insider', name: "Bangkok (Thonburi)", region: "Centro", latLng: "13.7251,100.4859", category: "Insider", image: IMAGES.bangkok, price: "€", tags: ["Street Food", "Autentico"], desc: "L'anima autentica sulla riva ovest. Cibo leggendario.", highlights: [{t: "Talat Phlu", d: "Mee Krob e gelato."}, {t: "Sunee Khao Mu Daeng", d: "Maiale arrosto sui binari."}], risk: null, tip: "Tardo pomeriggio per il mercato." },
-            { id: 'ayutthaya', name: "Ayutthaya", region: "Centro", latLng: "14.3532,100.5684", category: "Storia", image: IMAGES.ayutthaya, price: "€", tags: ["Rovine", "Muay Thai"], desc: "Antica capitale. Templi rossi al tramonto.", highlights: [{t: "Wat Mahathat", d: "Testa del Buddha."}, {t: "Gamberi di Fiume", d: "Giganti grigliati."}], risk: null, tip: "Bici alle 16:30." },
-            { id: 'khaoyai', name: "Khao Yai NP", region: "Centro", latLng: "14.4392,101.3723", category: "Natura", image: IMAGES.khaoyai, price: "€€", tags: ["Elefanti", "UNESCO"], desc: "Patrimonio UNESCO. Elefanti selvatici e cascate.", highlights: [{t: "Night Safari", d: "Animali liberi."}, {t: "PB Valley", d: "Vigneti thai."}], risk: null, tip: "Serve driver privato." },
-            { id: 'sukhothai', name: "Sukhothai", region: "Nord (Safe)", latLng: "17.0186,99.7028", category: "Storia", image: IMAGES.sukhothai, price: "€", tags: ["Bici", "Alba"], desc: "Parco storico pianeggiante. Meno smog di Chiang Mai.", highlights: [{t: "Wat Saphan Hin", d: "Alba mistica."}, {t: "Bici nel Parco", d: "Buddha giganti."}], risk: {type: "monitor", msg: "Monitorare AQI"}, tip: "Dormi nella Old City." },
-            { id: 'krabi', name: "Krabi (Ao Nang)", region: "Sud (Andamane)", latLng: "8.0307,98.8328", category: "Mare", image: IMAGES.krabi, price: "€€€", tags: ["Faraglioni", "Iconico"], desc: "Cattedrali di roccia. Base per island hopping.", highlights: [{t: "Railay West", d: "Tramonto top."}, {t: "Hong Islands", d: "Laguna segreta."}], risk: null, tip: "Ao Nang solo come base logistica." },
-            { id: 'similan', name: "Isole Similan", region: "Sud (Andamane)", latLng: "8.6631,97.6359", category: "Mare VIP", image: IMAGES.similan, price: "€€€", tags: ["Diving", "Top World"], desc: "Aperto solo fino al 15 Maggio. Acqua irreale.", highlights: [{t: "Sailing Rock", d: "Panoramico."}, {t: "Tartarughe", d: "Nuota con loro."}], risk: {type: "logistics", msg: "Prenotare!"}, tip: "Tour 'Early Bird' obbligatorio." },
-            { id: 'kohmuk', name: "Koh Muk", region: "Sud (Gemme)", latLng: "7.3722,99.2977", category: "Natura", image: IMAGES.kohmuk, price: "€€", tags: ["Dugonghi", "Grotta"], desc: "Il segreto delle Andamane. Habitat dei Dugonghi.", highlights: [{t: "Emerald Cave", d: "Spiaggia segreta."}, {t: "Sivalai Beach", d: "Lingua di sabbia."}], risk: {type: "logistics", msg: "Via Trang"}, tip: "Grotta alle 8:00 o 16:00." },
-            { id: 'kohlanta', name: "Koh Lanta", region: "Sud (Andamane)", latLng: "7.5758,99.0358", category: "Relax", image: IMAGES.kohlanta, price: "€€", tags: ["Nomadi", "Scooter"], desc: "L'isola chill. Niente moto d'acqua.", highlights: [{t: "Old Town", d: "Case in teak."}, {t: "Bamboo Bay", d: "Selvaggia."}], risk: null, tip: "Workshop Batik in Old Town." },
-            { id: 'kohlipe', name: "Koh Lipe", region: "Sud Estremo", latLng: "6.4884,99.2937", category: "Mare", image: IMAGES.kohlipe, price: "€€€", tags: ["Maldive Thai", "Turchese"], desc: "Lontana, piccola, incredibile. Acqua azzurra.", highlights: [{t: "Sunrise Beach", d: "Snorkeling."}, {t: "Walking Street", d: "Pesce fresco."}], risk: {type: "logistics", msg: "Viaggio lungo"}, tip: "Prenota con mesi di anticipo." },
-            { id: 'phuket', name: "Phuket Town", region: "Sud (Andamane)", latLng: "7.8804,98.3923", category: "Cultura/Mare", image: IMAGES.phuket, price: "€€", tags: ["Gastronomia", "Heritage"], desc: "Città vecchia sino-portoghese e cibo UNESCO.", highlights: [{t: "Walking Street", d: "Mercato domenicale."}, {t: "Cucina Peranakan", d: "Fusion unica."}], risk: null, tip: "Prova Hokkien Mee e Dim Sum." },
-            { id: 'kohyaoyai', name: "Koh Yao Yai", region: "Sud (Phang Nga)", latLng: "7.9544,98.5951", category: "Relax", image: IMAGES.kohyaoyai, price: "€€", tags: ["Pace", "Villaggi"], desc: "Oasi di pace tra Phuket e Krabi.", highlights: [{t: "Laem Haad", d: "Lingua di sabbia."}, {t: "Scooter", d: "Strade vuote."}], risk: null, tip: "Rispetto cultura locale (no alcol nei villaggi)." },
-            { id: 'kohkood', name: "Koh Kood", region: "Est (Golfo)", latLng: "11.6607,102.5323", category: "Mare Selvaggio", image: IMAGES.kohkood, price: "€€€", tags: ["Esclusivo", "Silenzio"], desc: "L'isola del cocco. Pochi resort, zero caos.", highlights: [{t: "Bang Bao", d: "Baia calma."}, {t: "Cascata Klong Chao", d: "Tuffo dolce."}], risk: {type: "logistics", msg: "Pochi ATM"}, tip: "Porta contanti." },
-            { id: 'kohchang', name: "Koh Chang", region: "Est (Golfo)", latLng: "12.0435,102.2965", category: "Avventura", image: IMAGES.kohchang, price: "€-€€", tags: ["Montagna", "Giungla"], desc: "L'isola Elefante. Grande e montuosa.", highlights: [{t: "Salak Phet", d: "Mangrovie est."}, {t: "Lonely Beach", d: "Backpacker vibe."}], risk: null, tip: "Occhio allo scooter, salite ripide." },
-            { id: 'chiangmai', name: "Chiang Mai", region: "Nord", latLng: "18.7883,98.9853", category: "Cultura", image: IMAGES.chiangmai, price: "€", tags: ["Templi", "Smog"], desc: "La Rosa del Nord. A Marzo rischio fumi agricoli.", highlights: [{t: "Doi Suthep", d: "Tempio dorato."}, {t: "Sunday Market", d: "Mercato immenso."}], risk: {type: "health", msg: "BURNING SEASON"}, tip: "Controlla AQI, porta N95." },
-            { id: 'chiangrai', name: "Chiang Rai", region: "Nord", latLng: "19.9105,99.8406", category: "Arte", image: IMAGES.chiangrai, price: "€", tags: ["Arte", "Templi"], desc: "Templi d'artista: Bianco, Blu e Nero.", highlights: [{t: "Tempio Bianco", d: "Arte visionaria."}, {t: "Triangolo d'Oro", d: "Confine Laos."}], risk: {type: "health", msg: "BURNING SEASON"}, tip: "Tempio Bianco alle 8:00." },
-            { id: 'huai_kha_khaeng', name: "Huai Kha Khaeng", region: "Ovest", latLng: "15.5997,99.3175", category: "Natura", image: IMAGES.huaikhakhaeng, price: "€€", tags: ["UNESCO", "Tigri"], desc: "Patrimonio UNESCO, tigri selvatiche. Accesso limitato.", highlights: [{t: "Safari", d: "Natura vera."}, {t: "Fauna Rara", d: "Zero turisti."}], risk: {type: "logistics", msg: "Guida Obbligatoria"}, tip: "Solo per esperti." }
+            { 
+                id: 'bangkok', name: "Bangkok (Mix)", region: "Centro", latLng: "13.7563,100.5018", category: "Cultura", image: IMAGES.bangkok, price: "€€", tags: ["Must-See", "Thonburi"], desc: "Il mix perfetto tra i grandi classici e l'autenticità di Thonburi.", 
+                highlights: [
+                    {t: "Grand Palace & Wat Pho", d: "Le icone spirituali (vai all'apertura)."}, 
+                    {t: "Khlong Bang Luang", d: "Comunità artistica sui canali (Baan Silapin)."},
+                    {t: "Mercato degli Amuleti", d: "Superstizione e cultura vera, fuori dai tour."}
+                ], risk: null, tip: "Prendi la barca pubblica (bandiera arancione) sul fiume Chao Phraya per muoverti come un locale." 
+            },
+            { 
+                id: 'bangkok_insider', name: "Bangkok (Thonburi)", region: "Centro", latLng: "13.7251,100.4859", category: "Insider", image: IMAGES.bangkok, price: "€", tags: ["Street Food", "Autentico"], desc: "L'anima autentica sulla riva ovest. Qui trovi il cibo di strada leggendario lontano dai turisti.", 
+                highlights: [
+                    {t: "Talat Phlu Market", d: "Mee Krob (vermicelli Re Rama V) e gelato di Ni-Ang."}, 
+                    {t: "Sunee Khao Mu Daeng", d: "Maiale arrosto servito sui binari del treno."},
+                    {t: "Baan Silapin", d: "Teatro delle marionette in una casa di legno di 200 anni."}
+                ], risk: null, tip: "Arriva a Talat Phlu nel tardo pomeriggio per vedere il mercato prendere vita." 
+            },
+            { 
+                id: 'ayutthaya', name: "Ayutthaya", region: "Centro", latLng: "14.3532,100.5684", category: "Storia", image: IMAGES.ayutthaya, price: "€", tags: ["Rovine", "Muay Thai"], desc: "Antica capitale imperiale. Templi rossi al tramonto e storia millenaria.", 
+                highlights: [
+                    {t: "Wat Mahathat", d: "Testa del Buddha nelle radici."}, 
+                    {t: "Gamberi di Fiume", d: "Giganti, grigliati sui ristoranti galleggianti."},
+                    {t: "Muay Thai Day", d: "17 Marzo (Evento Unico)."}
+                ], risk: null, tip: "Noleggia una bici nel tardo pomeriggio (16:30) per evitare il caldo." 
+            },
+            { 
+                id: 'khaoyai', name: "Khao Yai NP", region: "Centro", latLng: "14.4392,101.3723", category: "Natura", image: IMAGES.khaoyai, price: "€€", tags: ["Elefanti", "UNESCO"], desc: "Patrimonio UNESCO. Qui vedi gli elefanti selvatici veri, non quelli nei santuari.", 
+                highlights: [
+                    {t: "Night Safari", d: "Vedere gli animali nel loro habitat."}, 
+                    {t: "Cascata Haew Narok", d: "Imponente salto d'acqua."},
+                    {t: "PB Valley", d: "Vigneti thailandesi (sorprendenti)."}
+                ], risk: null, tip: "Serve un driver privato o tour guidato per entrare e muoversi nel parco." 
+            },
+            { 
+                id: 'sukhothai', name: "Sukhothai", region: "Nord (Safe)", latLng: "17.0186,99.7028", category: "Storia", image: IMAGES.sukhothai, price: "€", tags: ["Bici", "Alba"], desc: "L'Alba della Felicità. Parco storico immenso e pianeggiante, perfetto in bici.", 
+                highlights: [
+                    {t: "Wat Saphan Hin", d: "Alba mistica sulla collina."}, 
+                    {t: "Bici nel Parco", d: "Pedalata tra i Buddha giganti."},
+                    {t: "Noodle Sukhothai", d: "Specialità agrodolce locale."}
+                ], risk: {type: "monitor", msg: "Monitorare AQI"}, tip: "Soggiorna nella 'Old City' vicino al parco, non nella città nuova." 
+            },
+            { 
+                id: 'krabi', name: "Krabi (Ao Nang)", region: "Sud (Andamane)", latLng: "8.0307,98.8328", category: "Mare", image: IMAGES.krabi, price: "€€€", tags: ["Faraglioni", "Iconico"], desc: "Cattedrali di roccia sul mare. Base perfetta per l'island hopping.", 
+                highlights: [
+                    {t: "Railay West", d: "Tramonto tra le rocce."}, 
+                    {t: "Hong Islands", d: "Laguna smeraldo segreta."},
+                    {t: "Tiger Cave Temple", d: "Vista panoramica (1237 gradini)."}
+                ], risk: null, tip: "Evita la spiaggia di Ao Nang per il bagno (troppe barche), usala solo come base logistica." 
+            },
+            { 
+                id: 'similan', name: "Isole Similan", region: "Sud (Andamane)", latLng: "8.6631,97.6359", category: "Mare VIP", image: IMAGES.similan, price: "€€€", tags: ["Diving", "Top World"], desc: "Aperto solo 6 mesi l'anno (fino al 15 Maggio). Acqua irreale. Top 10 diving al mondo.", 
+                highlights: [
+                    {t: "Sailing Rock", d: "Punto panoramico iconico."}, 
+                    {t: "Tartarughe", d: "Nuotare con loro è frequente."},
+                    {t: "Snorkeling", d: "Visibilità 30 metri."}
+                ], risk: {type: "logistics", msg: "Prenotare!"}, tip: "Parti con un tour 'Early Bird' per arrivare prima delle folle delle 11:00." 
+            },
+            { 
+                id: 'kohmuk', name: "Koh Muk", region: "Sud (Gemme)", latLng: "7.3722,99.2977", category: "Natura", image: IMAGES.kohmuk, price: "€€", tags: ["Dugonghi", "Grotta"], desc: "Il segreto delle Andamane. Famosa per la Grotta di Smeraldo e habitat dei Dugonghi.", 
+                highlights: [
+                    {t: "Emerald Cave", d: "Nuota nel tunnel buio per raggiungere la spiaggia segreta."}, 
+                    {t: "Avvistamento Dugonghi", d: "Tour responsabile per vederli."},
+                    {t: "Sivalai Beach", d: "Lingua di sabbia bianca."}
+                ], risk: {type: "logistics", msg: "Via Trang"}, tip: "Evita la Grotta di Smeraldo tra le 10:00 e le 14:00 (orario tour di massa)." 
+            },
+            { 
+                id: 'kohlanta', name: "Koh Lanta", region: "Sud (Andamane)", latLng: "7.5758,99.0358", category: "Relax", image: IMAGES.kohlanta, price: "€€", tags: ["Nomadi", "Scooter"], desc: "L'isola chill. Niente moto d'acqua, solo bar in bambù e villaggi di pescatori.", 
+                highlights: [
+                    {t: "Old Town", d: "Case in teak su palafitte."}, 
+                    {t: "Tung Yee Peng", d: "Gondola tra le mangrovie."},
+                    {t: "Bamboo Bay", d: "Spiaggia selvaggia a sud."}
+                ], risk: null, tip: "Partecipa a un workshop di Batik o visita la comunità locale nella Old Town." 
+            },
+            { 
+                id: 'kohlipe', name: "Koh Lipe", region: "Sud Estremo", latLng: "6.4884,99.2937", category: "Mare", image: IMAGES.kohlipe, price: "€€€", tags: ["Maldive Thai", "Turchese"], desc: "Lontana, piccola, incredibile. L'acqua più azzurra della Thailandia. Molto turistica ma stupenda.", 
+                highlights: [
+                    {t: "Sunrise Beach", d: "Snorkeling dalla riva."}, 
+                    {t: "Tarutao Park", d: "Natura incontaminata."},
+                    {t: "Walking Street", d: "Pesce fresco la sera."}
+                ], risk: {type: "logistics", msg: "Viaggio lungo"}, tip: "Prenota traghetti e hotel con mesi di anticipo, l'isola è piccola." 
+            },
+            { 
+                id: 'phuket', name: "Phuket Town", region: "Sud (Andamane)", latLng: "7.8804,98.3923", category: "Cultura/Mare", image: IMAGES.phuket, price: "€€", tags: ["Gastronomia", "Heritage"], desc: "Non solo spiagge. La città vecchia è un gioiello sino-portoghese e capitale gastronomica UNESCO.", 
+                highlights: [
+                    {t: "Walking Street", d: "Mercato domenicale colorato."}, 
+                    {t: "Cucina Peranakan", d: "Fusion cinese-malese unica."},
+                    {t: "Nai Harn Beach", d: "Spiaggia tranquilla a sud."}
+                ], risk: null, tip: "Base strategica. Assaggia l'Hokkien Mee e i dim sum locali." 
+            },
+            { 
+                id: 'kohyaoyai', name: "Koh Yao Yai", region: "Sud (Phang Nga)", latLng: "7.9544,98.5951", category: "Relax", image: IMAGES.kohyaoyai, price: "€€", tags: ["Pace", "Villaggi"], desc: "Tra la folla di Phuket e Krabi, un'oasi di pace. Villaggi musulmani e piantagioni di gomma.", 
+                highlights: [
+                    {t: "Laem Haad", d: "Lingua di sabbia da film."}, 
+                    {t: "Giro in scooter", d: "Strade vuote e bufali."},
+                    {t: "Hong Island", d: "Vicina per gite in barca."}
+                ], risk: null, tip: "Rispetto per la cultura locale musulmana: niente alcol nei villaggi (solo nei resort)." 
+            },
+            { 
+                id: 'kohkood', name: "Koh Kood", region: "Est (Golfo)", latLng: "11.6607,102.5323", category: "Mare Selvaggio", image: IMAGES.kohkood, price: "€€€", tags: ["Esclusivo", "Silenzio"], desc: "L'isola del cocco. Pochi resort, niente vita notturna, spiagge bianche. Il rifugio per il silenzio.", 
+                highlights: [
+                    {t: "Bang Bao Beach", d: "Baia calma cristallina."}, 
+                    {t: "Cascata Klong Chao", d: "Tuffo dolce nella giungla."},
+                    {t: "Villaggi Pescatori", d: "Ao Yai per il pesce fresco."}
+                ], risk: {type: "logistics", msg: "Pochi ATM"}, tip: "Porta contanti sufficienti, i bancomat scarseggiano." 
+            },
+            { 
+                id: 'kohchang', name: "Koh Chang", region: "Est (Golfo)", latLng: "12.0435,102.2965", category: "Avventura", image: IMAGES.kohchang, price: "€-€€", tags: ["Montagna", "Giungla"], desc: "L'isola Elefante. Grande, montuosa e selvaggia. Offre tutto: dai party ai resort di lusso.", 
+                highlights: [
+                    {t: "Salak Phet", d: "Mangrovie lato est (tranquillo)."}, 
+                    {t: "Lonely Beach", d: "Vibe backpacker e feste."},
+                    {t: "White Sand Beach", d: "Spiaggia lunga servita."}
+                ], risk: null, tip: "Attenzione alla guida in scooter, le salite sono ripide e pericolose." 
+            },
+            { 
+                id: 'chiangmai', name: "Chiang Mai", region: "Nord", latLng: "18.7883,98.9853", category: "Cultura", image: IMAGES.chiangmai, price: "€", tags: ["Templi", "Smog"], desc: "La Rosa del Nord. A Marzo è sconsigliata per via dei fumi agricoli che coprono la vista.", 
+                highlights: [
+                    {t: "Doi Suthep", d: "Tempio dorato (vista fosca)."}, 
+                    {t: "Sunday Market", d: "Mercato immenso."},
+                    {t: "Città Vecchia", d: "Centinaia di templi."}
+                ], risk: {type: "health", msg: "BURNING SEASON"}, tip: "Se decidi di andare, porta mascherine N95 e controlla AQI ogni ora." 
+            },
+            { 
+                id: 'chiangrai', name: "Chiang Rai", region: "Nord", latLng: "19.9105,99.8406", category: "Arte", image: IMAGES.chiangrai, price: "€", tags: ["Arte", "Templi"], desc: "Famosa per i templi d'artista: Bianco, Blu e Nero. Anche qui l'aria è pessima a Marzo.", 
+                highlights: [
+                    {t: "Trekking Lahu", d: "Pernottamento autentico nel villaggio."}, 
+                    {t: "Tempio Bianco", d: "Arte visionaria contemporanea."},
+                    {t: "Triangolo d'Oro", d: "Confine con Laos e Myanmar."}
+                ], risk: {type: "health", msg: "BURNING SEASON"}, tip: "Vai al Tempio Bianco all'apertura (8:00) per le foto senza folla." 
+            },
+            { 
+                id: 'huai_kha_khaeng', name: "Huai Kha Khaeng", region: "Ovest", latLng: "15.5997,99.3175", category: "Natura", image: IMAGES.huaikhakhaeng, price: "€€", tags: ["UNESCO", "Tigri"], desc: "Per veri esploratori. Patrimonio UNESCO, ospita la più grande popolazione di tigri della Thailandia.", 
+                highlights: [
+                    {t: "Safari Fotografico", d: "Natura incontaminata."}, 
+                    {t: "Fauna Rara", d: "Bufali selvatici e tigri."},
+                    {t: "Isolamento", d: "Zero turisti."}
+                ], risk: {type: "logistics", msg: "Guida Obbligatoria"}, tip: "Non è turistico. Serve una guida specializzata." 
+            }
         ];
 
         // --- COMPONENTS ---
@@ -270,164 +394,207 @@
             </div>
         );
 
-        const ExploreView = ({ filter, setFilter, filteredDestinations, savedIds, toggleSave, selectedDest, setSelectedDest, isFavoritesMode = false }) => (
-            <div className="h-[calc(100vh-140px)] flex flex-col md:flex-row gap-6 animate-slide-up">
-                {/* LISTA */}
-                <div className="w-full md:w-5/12 flex flex-col h-full">
-                    {/* Filters - Hide in Favorites Mode */}
-                    {!isFavoritesMode && (
-                        <div className="flex gap-2 overflow-x-auto pb-4 pt-1 flex-shrink-0 no-scrollbar px-1">
-                            {['All', 'Mare', 'Cultura', 'Natura', 'Rischio'].map(f => (
-                                <button key={f} onClick={() => setFilter(f)}
-                                    className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border flex items-center gap-2 ${
-                                        filter === f ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+        const ExploreView = ({ filter, setFilter, filteredDestinations, savedIds, toggleSave, selectedDest, setSelectedDest, isFavoritesMode = false }) => {
+            const [mapQuery, setMapQuery] = useState('');
+            const [selectedHighlight, setSelectedHighlight] = useState(null);
+
+            // Update map when destination changes
+            useEffect(() => {
+                if (selectedDest) {
+                    setMapQuery(selectedDest.latLng);
+                    setSelectedHighlight(null);
+                }
+            }, [selectedDest]);
+
+            // Handle highlight click to pin on map
+            const handleHighlightClick = (highlight) => {
+                const query = `${highlight.t}, ${selectedDest.name}, Thailand`;
+                setMapQuery(query);
+                setSelectedHighlight(highlight.t);
+            };
+
+            const handleResetMap = () => {
+                setMapQuery(selectedDest.latLng);
+                setSelectedHighlight(null);
+            };
+
+            return (
+                <div className="h-[calc(100vh-140px)] flex flex-col md:flex-row gap-6 animate-slide-up">
+                    {/* LISTA */}
+                    <div className="w-full md:w-5/12 flex flex-col h-full">
+                        {/* Filters - Hide in Favorites Mode */}
+                        {!isFavoritesMode && (
+                            <div className="flex gap-2 overflow-x-auto pb-4 pt-1 flex-shrink-0 no-scrollbar px-1">
+                                {['All', 'Mare', 'Cultura', 'Natura', 'Rischio'].map(f => (
+                                    <button key={f} onClick={() => setFilter(f)}
+                                        className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border flex items-center gap-2 ${
+                                            filter === f ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                                        }`}>
+                                        {f}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                        
+                        {/* Favorites Header if mode is on */}
+                        {isFavoritesMode && (
+                            <div className="pb-4 pt-1 px-1">
+                                <h2 className="text-2xl font-bold text-slate-900">I tuoi Preferiti</h2>
+                                <p className="text-slate-500 text-sm">{savedIds.length} destinazioni salvate</p>
+                            </div>
+                        )}
+
+                        {/* Cards */}
+                        <div className="overflow-y-auto pr-2 space-y-3 flex-1 pb-24 md:pb-0 custom-scroll">
+                            {filteredDestinations.length === 0 ? (
+                                <div className="text-center py-12 opacity-50 flex flex-col items-center">
+                                    <div className="bg-slate-100 p-4 rounded-full mb-4">
+                                        <Icon name={isFavoritesMode ? "Heart" : "Map"} size={32} className="text-slate-400" />
+                                    </div>
+                                    <h3 className="font-bold text-slate-700">{isFavoritesMode ? "Nessun preferito" : "Nessuna destinazione"}</h3>
+                                    <p className="text-sm text-slate-500 max-w-xs mx-auto mt-2">
+                                        {isFavoritesMode 
+                                            ? "Salva le destinazioni che ti ispirano cliccando sul cuore." 
+                                            : "Prova a cambiare i filtri di ricerca."}
+                                    </p>
+                                </div>
+                            ) : filteredDestinations.map(d => (
+                                <div key={d.id} 
+                                    onClick={() => setSelectedDest(d)}
+                                    className={`bg-white p-3 rounded-xl border transition-all cursor-pointer group relative ${
+                                        selectedDest?.id === d.id ? 'border-emerald-500 ring-1 ring-emerald-500 shadow-md' : 'border-slate-200 hover:border-slate-300'
                                     }`}>
-                                    {f}
-                                </button>
+                                    <div className="flex gap-4">
+                                        <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 relative">
+                                            <img src={d.image} alt={d.name} className="w-full h-full object-cover" loading="lazy" />
+                                            {/* FIXED: Replaced generic Icon with direct SVG HeartIcon for reliability */}
+                                            <button onClick={(e) => { e.stopPropagation(); toggleSave(d.id); }} 
+                                                className="absolute top-1 right-1 w-8 h-8 bg-white border border-slate-100 rounded-full flex items-center justify-center shadow-md z-10 active:scale-90 transition-transform">
+                                                <HeartIcon 
+                                                    filled={savedIds.includes(d.id)} 
+                                                    size={16}
+                                                    className={savedIds.includes(d.id) ? "text-red-600" : "text-slate-900"} 
+                                                />
+                                            </button>
+                                            
+                                            {d.risk?.type === 'health' && (
+                                                <div className="absolute inset-0 bg-red-900/20 flex items-center justify-center pointer-events-none">
+                                                    <Icon name="AlertTriangle" className="text-white drop-shadow-md" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0 py-1">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h4 className="font-bold text-slate-900 truncate pr-2">{d.name}</h4>
+                                                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{d.region}</p>
+                                                </div>
+                                            </div>
+                                            <RiskBadge risk={d.risk} />
+                                            {!d.risk && <p className="text-xs text-slate-500 mt-2 line-clamp-2">{d.desc}</p>}
+                                            <div className="mt-2 flex gap-2 text-[10px] font-medium text-slate-400">
+                                                <span className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{d.price}</span>
+                                                <span className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{d.tags[0]}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             ))}
                         </div>
-                    )}
-                    
-                    {/* Favorites Header if mode is on */}
-                    {isFavoritesMode && (
-                        <div className="pb-4 pt-1 px-1">
-                            <h2 className="text-2xl font-bold text-slate-900">I tuoi Preferiti</h2>
-                            <p className="text-slate-500 text-sm">{savedIds.length} destinazioni salvate</p>
-                        </div>
-                    )}
+                    </div>
 
-                    {/* Cards */}
-                    <div className="overflow-y-auto pr-2 space-y-3 flex-1 pb-24 md:pb-0 custom-scroll">
-                        {filteredDestinations.length === 0 ? (
-                            <div className="text-center py-12 opacity-50 flex flex-col items-center">
-                                <div className="bg-slate-100 p-4 rounded-full mb-4">
-                                    <Icon name={isFavoritesMode ? "Heart" : "Map"} size={32} className="text-slate-400" />
-                                </div>
-                                <h3 className="font-bold text-slate-700">{isFavoritesMode ? "Nessun preferito" : "Nessuna destinazione"}</h3>
-                                <p className="text-sm text-slate-500 max-w-xs mx-auto mt-2">
-                                    {isFavoritesMode 
-                                        ? "Salva le destinazioni che ti ispirano cliccando sul cuore." 
-                                        : "Prova a cambiare i filtri di ricerca."}
-                                </p>
-                            </div>
-                        ) : filteredDestinations.map(d => (
-                            <div key={d.id} 
-                                onClick={() => setSelectedDest(d)}
-                                className={`bg-white p-3 rounded-xl border transition-all cursor-pointer group relative ${
-                                    selectedDest?.id === d.id ? 'border-emerald-500 ring-1 ring-emerald-500 shadow-md' : 'border-slate-200 hover:border-slate-300'
-                                }`}>
-                                <div className="flex gap-4">
-                                    <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 relative">
-                                        <img src={d.image} alt={d.name} className="w-full h-full object-cover" loading="lazy" />
-                                        {/* FIXED: Replaced generic Icon with direct SVG HeartIcon for reliability */}
-                                        <button onClick={(e) => { e.stopPropagation(); toggleSave(d.id); }} 
-                                            className="absolute top-1 right-1 w-8 h-8 bg-white border border-slate-100 rounded-full flex items-center justify-center shadow-md z-10 active:scale-90 transition-transform">
+                    {/* DETTAGLIO (Desktop) */}
+                    <div className="hidden md:flex md:w-7/12 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden flex-col h-full relative">
+                        {selectedDest ? (
+                            <>
+                                <div className="h-72 relative flex-shrink-0 group">
+                                    <img src={selectedDest.image} className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-90"></div>
+                                    <div className="absolute top-6 right-6 z-20">
+                                        <button onClick={() => toggleSave(selectedDest.id)} className="bg-white shadow-xl p-3 rounded-full transition-all hover:scale-105 active:scale-95 border border-slate-100">
                                             <HeartIcon 
-                                                filled={savedIds.includes(d.id)} 
-                                                size={16}
-                                                className={savedIds.includes(d.id) ? "text-red-600" : "text-slate-900"} 
+                                                filled={savedIds.includes(selectedDest.id)} 
+                                                size={24}
+                                                className={savedIds.includes(selectedDest.id) ? "text-red-600" : "text-slate-900"} 
                                             />
                                         </button>
-                                        
-                                        {d.risk?.type === 'health' && (
-                                            <div className="absolute inset-0 bg-red-900/20 flex items-center justify-center pointer-events-none">
-                                                <Icon name="AlertTriangle" className="text-white drop-shadow-md" />
-                                            </div>
-                                        )}
                                     </div>
-                                    <div className="flex-1 min-w-0 py-1">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h4 className="font-bold text-slate-900 truncate pr-2">{d.name}</h4>
-                                                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{d.region}</p>
-                                            </div>
-                                        </div>
-                                        <RiskBadge risk={d.risk} />
-                                        {!d.risk && <p className="text-xs text-slate-500 mt-2 line-clamp-2">{d.desc}</p>}
-                                        <div className="mt-2 flex gap-2 text-[10px] font-medium text-slate-400">
-                                            <span className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{d.price}</span>
-                                            <span className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">{d.tags[0]}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* DETTAGLIO (Desktop) */}
-                <div className="hidden md:flex md:w-7/12 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden flex-col h-full relative">
-                    {selectedDest ? (
-                        <>
-                            <div className="h-72 relative flex-shrink-0 group">
-                                <img src={selectedDest.image} className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-90"></div>
-                                <div className="absolute top-6 right-6 z-20">
-                                    <button onClick={() => toggleSave(selectedDest.id)} className="bg-white shadow-xl p-3 rounded-full transition-all hover:scale-105 active:scale-95 border border-slate-100">
-                                        <HeartIcon 
-                                            filled={savedIds.includes(selectedDest.id)} 
-                                            size={24}
-                                            className={savedIds.includes(selectedDest.id) ? "text-red-600" : "text-slate-900"} 
-                                        />
-                                    </button>
-                                </div>
-                                <div className="absolute bottom-6 left-8 text-white max-w-lg">
-                                    <div className="flex gap-2 mb-3">
-                                        {selectedDest.tags.map(t => (
-                                            <span key={t} className="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide">{t}</span>
-                                        ))}
-                                    </div>
-                                    <h2 className="text-4xl font-bold mb-2">{selectedDest.name}</h2>
-                                    <p className="opacity-90 text-sm leading-relaxed">{selectedDest.desc}</p>
-                                </div>
-                            </div>
-                            
-                            <div className="flex-1 overflow-y-auto p-8 bg-white">
-                                <div className="grid grid-cols-2 gap-8 mb-8">
-                                    <div>
-                                        <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider mb-4 border-b pb-2">Highlights</h3>
-                                        <div className="space-y-4">
-                                            {selectedDest.highlights.map((h, i) => (
-                                                <div key={i} className="flex gap-3">
-                                                    <div className="mt-1 text-emerald-500"><Icon name="CheckCircle2" size={16} /></div>
-                                                    <div>
-                                                        <strong className="block text-sm text-slate-800">{h.t}</strong>
-                                                        <span className="text-xs text-slate-500">{h.d}</span>
-                                                    </div>
-                                                </div>
+                                    <div className="absolute bottom-6 left-8 text-white max-w-lg">
+                                        <div className="flex gap-2 mb-3">
+                                            {selectedDest.tags.map(t => (
+                                                <span key={t} className="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide">{t}</span>
                                             ))}
                                         </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider mb-4 border-b pb-2">Insider Tip</h3>
-                                        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                                            <p className="text-indigo-900 text-sm italic leading-relaxed">"{selectedDest.tip}"</p>
-                                        </div>
-                                        <div className="mt-6">
-                                            <RiskBadge risk={selectedDest.risk} />
-                                        </div>
+                                        <h2 className="text-4xl font-bold mb-2">{selectedDest.name}</h2>
+                                        <p className="opacity-90 text-sm leading-relaxed">{selectedDest.desc}</p>
                                     </div>
                                 </div>
-                                <div className="h-48 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 relative group">
-                                    <iframe width="100%" height="100%" frameBorder="0" scrolling="no" 
-                                        src={`https://maps.google.com/maps?q=${selectedDest.latLng}&t=&z=10&ie=UTF8&iwloc=&output=embed`} 
-                                        className="opacity-80 group-hover:opacity-100 transition-opacity">
-                                    </iframe>
-                                    <a href={`https://www.google.com/maps/search/?api=1&query=${selectedDest.name}`} target="_blank" className="absolute bottom-3 right-3 bg-white text-slate-900 px-4 py-2 rounded-lg text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-slate-50">
-                                        Apri Maps <Icon name="ExternalLink" size={12} />
-                                    </a>
+                                
+                                <div className="flex-1 overflow-y-auto p-8 bg-white">
+                                    <div className="grid grid-cols-2 gap-8 mb-8">
+                                        <div>
+                                            <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider mb-4 border-b pb-2">Highlights Interattivi</h3>
+                                            <p className="text-[10px] text-slate-400 mb-3">Clicca per pinnare sulla mappa</p>
+                                            <div className="space-y-3">
+                                                {selectedDest.highlights.map((h, i) => (
+                                                    <div 
+                                                        key={i} 
+                                                        onClick={() => handleHighlightClick(h)}
+                                                        className={`flex gap-3 p-2 rounded-lg cursor-pointer transition-all border ${selectedHighlight === h.t ? 'bg-emerald-50 border-emerald-500 shadow-sm' : 'border-transparent hover:bg-slate-50 hover:border-slate-200'}`}
+                                                    >
+                                                        <div className={`mt-1 ${selectedHighlight === h.t ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                                            <Icon name="MapPin" size={16} fill={selectedHighlight === h.t ? "currentColor" : "none"} />
+                                                        </div>
+                                                        <div>
+                                                            <strong className={`block text-sm ${selectedHighlight === h.t ? 'text-emerald-900' : 'text-slate-800'}`}>{h.t}</strong>
+                                                            <span className="text-xs text-slate-500">{h.d}</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider mb-4 border-b pb-2">Insider Tip</h3>
+                                            <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                                <p className="text-indigo-900 text-sm italic leading-relaxed">"{selectedDest.tip}"</p>
+                                            </div>
+                                            <div className="mt-6">
+                                                <RiskBadge risk={selectedDest.risk} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="h-48 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 relative group">
+                                        {/* Dynamic Map Iframe */}
+                                        <iframe width="100%" height="100%" frameBorder="0" scrolling="no" 
+                                            src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=${selectedHighlight ? 14 : 10}&ie=UTF8&iwloc=&output=embed`} 
+                                            className="transition-opacity">
+                                        </iframe>
+                                        
+                                        {selectedHighlight && (
+                                            <button 
+                                                onClick={handleResetMap}
+                                                className="absolute bottom-3 left-3 bg-white text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-slate-50 z-10"
+                                            >
+                                                <Icon name="Undo2" size={12} /> Reset Vista
+                                            </button>
+                                        )}
+
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`} target="_blank" className="absolute bottom-3 right-3 bg-white text-slate-900 px-4 py-2 rounded-lg text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-slate-50">
+                                            Apri Maps <Icon name="ExternalLink" size={12} />
+                                        </a>
+                                    </div>
                                 </div>
+                            </>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-slate-300">
+                                <Icon name="MapPin" size={64} className="mb-4 opacity-50" />
+                                <p>Seleziona una destinazione</p>
                             </div>
-                        </>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-slate-300">
-                            <Icon name="MapPin" size={64} className="mb-4 opacity-50" />
-                            <p>Seleziona una destinazione</p>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        };
 
         // --- APP CONTROLLER ---
 
