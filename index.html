@@ -4,14 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com;
+        style-src 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com;
+        font-src https://fonts.gstatic.com;
+        img-src * data: blob:;
+        frame-src https://maps.google.com;
+        connect-src 'none';
+    ">
     <title>ThaiPlanner '26 - Ultimate Guide & Planner</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- React & ReactDOM (production builds) -->
+    <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 
     <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -229,6 +238,74 @@
             }
         ];
 
+        // --- CONSTANTS ---
+        const TABS = [
+            { id: 'strategy', label: 'Strategy', icon: 'LayoutDashboard' },
+            { id: 'explore',  label: 'Esplora',  icon: 'Map'             },
+            { id: 'favorites',label: 'Preferiti',icon: 'Heart'           },
+        ];
+
+        const FILTERS = ['All', 'Mare', 'Cultura', 'Natura', 'Rischio'];
+
+        const STORAGE_KEY = 'thai_saved';
+
+        // --- ERROR BOUNDARY ---
+        class ErrorBoundary extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false };
+            }
+            static getDerivedStateFromError() {
+                return { hasError: true };
+            }
+            componentDidCatch(error, info) {
+                console.error('ThAItour error:', error, info);
+            }
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center">
+                            <div className="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md">
+                                <div className="text-4xl mb-4">⚠️</div>
+                                <h2 className="text-xl font-bold text-red-800 mb-2">Qualcosa è andato storto</h2>
+                                <p className="text-red-600 text-sm mb-4">Si è verificato un errore inaspettato.</p>
+                                <button onClick={() => this.setState({ hasError: false })}
+                                    className="bg-slate-900 text-white px-6 py-2 rounded-xl font-bold text-sm hover:bg-slate-700 transition-colors">
+                                    Riprova
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }
+                return this.props.children;
+            }
+        }
+
+        // --- CUSTOM HOOKS ---
+        const useMapState = (selectedDest) => {
+            const [mapQuery, setMapQuery] = useState('');
+            const [selectedHighlight, setSelectedHighlight] = useState(null);
+
+            useEffect(() => {
+                if (selectedDest) {
+                    setMapQuery(selectedDest.latLng);
+                    setSelectedHighlight(null);
+                }
+            }, [selectedDest]);
+
+            const handleHighlightClick = useCallback((highlight) => {
+                setMapQuery(`${highlight.t}, ${selectedDest.name}, Thailand`);
+                setSelectedHighlight(highlight.t);
+            }, [selectedDest]);
+
+            const handleResetMap = useCallback(() => {
+                setMapQuery(selectedDest ? selectedDest.latLng : '');
+                setSelectedHighlight(null);
+            }, [selectedDest]);
+
+            return { mapQuery, selectedHighlight, handleHighlightClick, handleResetMap };
+        };
+
         // --- COMPONENTS ---
 
         const Icon = ({ name, size = 16, className = "", fill = "none" }) => {
@@ -396,28 +473,7 @@
         );
 
         const ExploreView = ({ filter, setFilter, filteredDestinations, savedIds, toggleSave, selectedDest, setSelectedDest, isFavoritesMode = false }) => {
-            const [mapQuery, setMapQuery] = useState('');
-            const [selectedHighlight, setSelectedHighlight] = useState(null);
-
-            // Update map when destination changes
-            useEffect(() => {
-                if (selectedDest) {
-                    setMapQuery(selectedDest.latLng);
-                    setSelectedHighlight(null);
-                }
-            }, [selectedDest]);
-
-            // Handle highlight click to pin on map
-            const handleHighlightClick = (highlight) => {
-                const query = `${highlight.t}, ${selectedDest.name}, Thailand`;
-                setMapQuery(query);
-                setSelectedHighlight(highlight.t);
-            };
-
-            const handleResetMap = () => {
-                setMapQuery(selectedDest.latLng);
-                setSelectedHighlight(null);
-            };
+            const { mapQuery, selectedHighlight, handleHighlightClick, handleResetMap } = useMapState(selectedDest);
 
             return (
                 <div className="h-[calc(100vh-140px)] flex flex-col md:flex-row gap-6 animate-slide-up">
@@ -426,7 +482,7 @@
                         {/* Filters - Hide in Favorites Mode */}
                         {!isFavoritesMode && (
                             <div className="flex gap-2 overflow-x-auto pb-4 pt-1 flex-shrink-0 no-scrollbar px-1">
-                                {['All', 'Mare', 'Cultura', 'Natura', 'Rischio'].map(f => (
+                                {FILTERS.map(f => (
                                     <button key={f} onClick={() => setFilter(f)}
                                         className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border flex items-center gap-2 ${
                                             filter === f ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
@@ -467,7 +523,7 @@
                                     }`}>
                                     <div className="flex gap-4">
                                         <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 relative">
-                                            <img src={d.image} alt={d.name} className="w-full h-full object-cover" loading="lazy" />
+                                            <img src={d.image} alt={d.name} className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none'; }} />
                                             {/* FIXED: Replaced generic Icon with direct SVG HeartIcon for reliability */}
                                             <button onClick={(e) => { e.stopPropagation(); toggleSave(d.id); }} 
                                                 className="absolute top-1 right-1 w-8 h-8 bg-white border border-slate-100 rounded-full flex items-center justify-center shadow-md z-10 active:scale-90 transition-transform">
@@ -509,7 +565,7 @@
                         {selectedDest ? (
                             <>
                                 <div className="h-72 relative flex-shrink-0 group">
-                                    <img src={selectedDest.image} className="w-full h-full object-cover" />
+                                    <img src={selectedDest.image} alt={selectedDest.name} className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-90"></div>
                                     <div className="absolute top-6 right-6 z-20">
                                         <button onClick={() => toggleSave(selectedDest.id)} className="bg-white shadow-xl p-3 rounded-full transition-all hover:scale-105 active:scale-95 border border-slate-100">
@@ -566,8 +622,9 @@
                                     </div>
                                     <div className="h-48 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 relative group">
                                         {/* Dynamic Map Iframe */}
-                                        <iframe width="100%" height="100%" frameBorder="0" scrolling="no" 
-                                            src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=${selectedHighlight ? 14 : 10}&ie=UTF8&iwloc=&output=embed`} 
+                                        <iframe width="100%" height="100%" frameBorder="0" scrolling="no"
+                                            src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=${selectedHighlight ? 14 : 10}&ie=UTF8&iwloc=&output=embed`}
+                                            sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
                                             className="transition-opacity">
                                         </iframe>
                                         
@@ -603,19 +660,26 @@
             const [activeTab, setActiveTab] = useState('strategy');
             const [filter, setFilter] = useState('All');
             const [savedIds, setSavedIds] = useState(() => {
-                const saved = localStorage.getItem('thai_saved');
-                return saved ? JSON.parse(saved) : [];
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY);
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    return [];
+                }
             });
             const [selectedDest, setSelectedDest] = useState(null);
             const [toast, setToast] = useState({ show: false, msg: '' });
 
-            // State specific to mobile modal for interactive map
-            const [mobileMapQuery, setMobileMapQuery] = useState('');
-            const [mobileSelectedHighlight, setMobileSelectedHighlight] = useState(null);
+            const {
+                mapQuery: mobileMapQuery,
+                selectedHighlight: mobileSelectedHighlight,
+                handleHighlightClick: handleMobileHighlightClick,
+                handleResetMap: handleMobileResetMap,
+            } = useMapState(selectedDest);
 
             // Persistenza
             useEffect(() => {
-                localStorage.setItem('thai_saved', JSON.stringify(savedIds));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(savedIds));
             }, [savedIds]);
 
             // Auto-select first item on desktop
@@ -624,25 +688,6 @@
                     setSelectedDest(DESTINATIONS[0]);
                 }
             }, []);
-
-            // Mobile Map Logic
-            useEffect(() => {
-                if (selectedDest) {
-                    setMobileMapQuery(selectedDest.latLng);
-                    setMobileSelectedHighlight(null);
-                }
-            }, [selectedDest]);
-
-            const handleMobileHighlightClick = (highlight) => {
-                const query = `${highlight.t}, ${selectedDest.name}, Thailand`;
-                setMobileMapQuery(query);
-                setMobileSelectedHighlight(highlight.t);
-            };
-
-            const handleMobileResetMap = () => {
-                setMobileMapQuery(selectedDest.latLng);
-                setMobileSelectedHighlight(null);
-            };
 
             const toggleSave = useCallback((id) => {
                 setSavedIds(prev => {
@@ -682,11 +727,7 @@
                             </div>
                         </div>
                         <div className="hidden md:flex bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
-                            {[
-                                {id: 'strategy', label: 'Strategy', icon: 'LayoutDashboard'},
-                                {id: 'explore', label: 'Esplora', icon: 'Map'},
-                                {id: 'favorites', label: 'Preferiti', icon: 'Heart'},
-                            ].map(t => (
+                            {TABS.map(t => (
                                 <button key={t.id} onClick={() => setActiveTab(t.id)}
                                     className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${activeTab === t.id ? 'bg-slate-900 text-white shadow' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>
                                     <Icon name={t.icon} size={16} fill={t.id === 'favorites' && activeTab === 'favorites' ? "currentColor" : "none"} /> {t.label}
@@ -716,8 +757,8 @@
                     {selectedDest && window.innerWidth < 768 && (
                         <div className="fixed inset-0 z-[60] bg-white animate-slide-up overflow-y-auto">
                             <div className="relative h-72">
-                                <img src={selectedDest.image} className="w-full h-full object-cover" />
-                                
+                                <img src={selectedDest.image} alt={selectedDest.name} className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
+
                                 {/* UPDATED CLOSE BUTTON: Larger, High Contrast, Safely Positioned */}
                                 <button onClick={() => setSelectedDest(null)} 
                                     className="absolute top-6 right-6 bg-white text-slate-900 p-3 rounded-full shadow-xl z-50 border border-slate-100 hover:scale-110 active:scale-95 transition-all">
@@ -773,8 +814,9 @@
                                 </div>
 
                                 <div className="h-64 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative shadow-inner">
-                                     <iframe width="100%" height="100%" frameBorder="0" scrolling="no" 
+                                     <iframe width="100%" height="100%" frameBorder="0" scrolling="no"
                                         src={`https://maps.google.com/maps?q=${encodeURIComponent(mobileMapQuery)}&t=&z=${mobileSelectedHighlight ? 14 : 10}&ie=UTF8&iwloc=&output=embed`}
+                                        sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
                                         className="transition-opacity">
                                     </iframe>
                                     {mobileSelectedHighlight && (
@@ -793,11 +835,7 @@
 
                     {/* Mobile Tab Bar - UPDATED SIZE */}
                     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around p-4 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-                        {[
-                            {id: 'strategy', label: 'Strategy', icon: 'LayoutDashboard'},
-                            {id: 'explore', label: 'Esplora', icon: 'Map'},
-                            {id: 'favorites', label: 'Preferiti', icon: 'Heart'},
-                        ].map(t => (
+                        {TABS.map(t => (
                             <button key={t.id} onClick={() => { setActiveTab(t.id); if(t.id !== activeTab) setSelectedDest(null); }}
                                 className={`flex flex-col items-center gap-1.5 transition-colors w-20 ${activeTab === t.id ? 'text-emerald-600' : 'text-slate-400'}`}>
                                 <Icon name={t.icon} size={26} strokeWidth={activeTab === t.id ? 2.5 : 2} fill={t.id === 'favorites' && activeTab === 'favorites' ? "currentColor" : "none"} />
@@ -812,7 +850,7 @@
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        root.render(<ErrorBoundary><App /></ErrorBoundary>);
     </script>
 </body>
 </html>
